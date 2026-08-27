@@ -1,9 +1,9 @@
 /**
  * ShapeStage3D.jsx
  * ═══════════════════════════════════════════════════════════════
- * Ultra-clean 3D Shape Stage.
- * Renders Three.js geometry, unfolding/reassembling 3D net rigs,
- * measurement lines, draggable handles, and optional unit block grid.
+ * Ultra-clean 3D Shape Stage for 12 Geometry Shapes.
+ * Supports solid view, unit cube voxels, 3D measurements,
+ * draggable handles, and cinema-grade unfolding net rigs.
  * ═══════════════════════════════════════════════════════════════
  */
 import React, { useRef, useMemo, useState } from 'react';
@@ -17,7 +17,7 @@ import useAppStore from '../../store/useAppStore';
 
 const round = (v) => Math.round(v * 10) / 10;
 
-// ─── Shape Geometry Renderer ────────────────────────────────────
+// ─── Shape Geometry Renderer (12 Shapes) ────────────────────────
 function ShapeGeometry({ shapeId, dims, showBlocks, openFactor }) {
   const config = shapeConfig[shapeId];
   const meshRef = useRef();
@@ -28,9 +28,8 @@ function ShapeGeometry({ shapeId, dims, showBlocks, openFactor }) {
     }
   });
 
-  const baseColor = config.accentColor;
+  const baseColor = config?.accentColor || '#3b82f6';
 
-  // If opening / unfolding net mode is active, render UnfoldingNet3D
   if (openFactor > 0) {
     return (
       <group ref={meshRef}>
@@ -54,7 +53,7 @@ function ShapeGeometry({ shapeId, dims, showBlocks, openFactor }) {
     clearcoat: 0.2,
   };
 
-  switch (config.geometryType) {
+  switch (config?.geometryType) {
     case 'box':
       return (
         <mesh ref={meshRef}>
@@ -108,6 +107,33 @@ function ShapeGeometry({ shapeId, dims, showBlocks, openFactor }) {
     case 'prism':
       return <PrismGeometry ref={meshRef} dims={dims} materialProps={materialProps} />;
 
+    case 'hemisphere':
+      return (
+        <mesh ref={meshRef} rotation={[Math.PI, 0, 0]}>
+          <sphereGeometry args={[dims.radius, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
+          <meshPhysicalMaterial {...materialProps} side={THREE.DoubleSide} />
+        </mesh>
+      );
+
+    case 'hexagonal_prism':
+      return <HexPrismGeometry ref={meshRef} dims={dims} materialProps={materialProps} />;
+
+    case 'octahedron':
+      return (
+        <mesh ref={meshRef}>
+          <octahedronGeometry args={[dims.edge / Math.sqrt(2)]} />
+          <meshPhysicalMaterial {...materialProps} />
+        </mesh>
+      );
+
+    case 'torus':
+      return (
+        <mesh ref={meshRef} rotation={[-Math.PI / 2, 0, 0]}>
+          <torusGeometry args={config.getGeometryArgs(dims)} />
+          <meshPhysicalMaterial {...materialProps} />
+        </mesh>
+      );
+
     default:
       return (
         <mesh ref={meshRef}>
@@ -117,6 +143,38 @@ function ShapeGeometry({ shapeId, dims, showBlocks, openFactor }) {
       );
   }
 }
+
+// ─── Hexagonal Prism Geometry ──────────────────────────────────
+const HexPrismGeometry = React.forwardRef(({ dims, materialProps }, ref) => {
+  const geometry = useMemo(() => {
+    const S = dims.side || 2;
+    const H = dims.height || 4;
+    const shape = new THREE.Shape();
+    for (let i = 0; i < 6; i++) {
+      const a = (i * Math.PI) / 3;
+      const x = S * Math.cos(a);
+      const y = S * Math.sin(a);
+      if (i === 0) shape.moveTo(x, y);
+      else shape.lineTo(x, y);
+    }
+    shape.closePath();
+
+    const geo = new THREE.ExtrudeGeometry(shape, {
+      depth: H,
+      bevelEnabled: false,
+    });
+    geo.translate(0, 0, -H / 2);
+    geo.rotateX(-Math.PI / 2);
+    geo.computeVertexNormals();
+    return geo;
+  }, [dims.side, dims.height]);
+
+  return (
+    <mesh ref={ref} geometry={geometry}>
+      <meshPhysicalMaterial {...materialProps} />
+    </mesh>
+  );
+});
 
 // ─── Triangle Geometry (flat 2D in XY plane) ────────────────────
 const TriangleGeometry = React.forwardRef(({ dims, materialProps }, ref) => {
@@ -315,13 +373,13 @@ export default function ShapeStage3D({ shapeId, dimensions, openFactor = 0, onDi
         openFactor={openFactor}
       />
 
-      {/* Measurement lines (shown when mostly closed) */}
-      {openFactor < 0.3 && (
+      {/* Measurement lines */}
+      {openFactor < 0.25 && (
         <MeasurementLines shapeId={shapeId} dims={dimensions} />
       )}
 
-      {/* Dimension drag handles (shown when mostly closed) */}
-      {openFactor < 0.3 && config.dimensions.map((dim) => {
+      {/* Dimension drag handles */}
+      {openFactor < 0.25 && config.dimensions.map((dim) => {
         const handlePos = dim.getHandlePos(dimensions);
         const label = `${dim.symbol} = ${round(dimensions[dim.key])} cm`;
 

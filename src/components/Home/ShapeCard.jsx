@@ -1,7 +1,7 @@
 /**
  * ShapeCard.jsx
  * ═══════════════════════════════════════════════════════════════
- * Ultra-simple, playful 3D shape card for the home gallery.
+ * Ultra-simple, playful 3D shape card for the home gallery (12 Shapes).
  * ═══════════════════════════════════════════════════════════════
  */
 import React, { useRef, useMemo } from 'react';
@@ -60,6 +60,57 @@ function MiniShape({ shapeId, accentColor }) {
           <meshStandardMaterial {...matProps} />
         </mesh>
       );
+    case 'pyramid':
+      return (
+        <mesh ref={meshRef} scale={s}>
+          <coneGeometry args={[1.3, 2, 4]} />
+          <meshStandardMaterial {...matProps} />
+        </mesh>
+      );
+    case 'hemisphere':
+      return (
+        <mesh ref={meshRef} scale={s} rotation={[Math.PI, 0, 0]}>
+          <sphereGeometry args={[1.3, 24, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
+          <meshStandardMaterial {...matProps} side={THREE.DoubleSide} />
+        </mesh>
+      );
+    case 'octahedron':
+      return (
+        <mesh ref={meshRef} scale={s}>
+          <octahedronGeometry args={[1.4]} />
+          <meshStandardMaterial {...matProps} />
+        </mesh>
+      );
+    case 'torus':
+      return (
+        <mesh ref={meshRef} scale={s * 0.9} rotation={[-Math.PI / 3, 0, 0]}>
+          <torusGeometry args={[1.3, 0.5, 16, 32]} />
+          <meshStandardMaterial {...matProps} />
+        </mesh>
+      );
+    case 'hexagonal_prism': {
+      const geo = useMemo(() => {
+        const shape = new THREE.Shape();
+        for (let i = 0; i < 6; i++) {
+          const a = (i * Math.PI) / 3;
+          const x = 1 * Math.cos(a);
+          const y = 1 * Math.sin(a);
+          if (i === 0) shape.moveTo(x, y);
+          else shape.lineTo(x, y);
+        }
+        shape.closePath();
+        const g = new THREE.ExtrudeGeometry(shape, { depth: 2, bevelEnabled: false });
+        g.translate(0, 0, -1);
+        g.rotateX(-Math.PI / 2);
+        g.computeVertexNormals();
+        return g;
+      }, []);
+      return (
+        <mesh ref={meshRef} geometry={geo} scale={s * 0.85}>
+          <meshStandardMaterial {...matProps} />
+        </mesh>
+      );
+    }
     case 'triangle': {
       const geo = useMemo(() => {
         const verts = new Float32Array([-1.2, -0.8, 0, 1.2, -0.8, 0, 0, 1.2, 0]);
@@ -74,13 +125,6 @@ function MiniShape({ shapeId, accentColor }) {
         </mesh>
       );
     }
-    case 'pyramid':
-      return (
-        <mesh ref={meshRef} scale={s}>
-          <coneGeometry args={[1.3, 2, 4]} />
-          <meshStandardMaterial {...matProps} />
-        </mesh>
-      );
     case 'prism': {
       const geo = useMemo(() => {
         const shape = new THREE.Shape();
