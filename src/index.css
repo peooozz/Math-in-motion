@@ -1,0 +1,342 @@
+@import "tailwindcss";
+
+/* ─── Design System Tokens ─────────────────────────────────────── */
+@theme {
+  --color-bg-dark: #0f0d1a;
+  --color-bg-card: rgba(255, 255, 255, 0.06);
+  --color-bg-glass: rgba(255, 255, 255, 0.08);
+  --color-border-glass: rgba(255, 255, 255, 0.12);
+  --color-text-primary: #f1f0f5;
+  --color-text-secondary: #a09cb5;
+  --color-text-muted: #6b6580;
+
+  /* Module accent palette */
+  --color-accent-cube: #f43f5e;
+  --color-accent-cuboid: #3b82f6;
+  --color-accent-cylinder: #8b5cf6;
+  --color-accent-sphere: #10b981;
+  --color-accent-cone: #f59e0b;
+  --color-accent-triangle: #14b8a6;
+  --color-accent-pyramid: #f97316;
+  --color-accent-prism: #06b6d4;
+
+  --color-accent-primary: #818cf8;
+  --color-accent-glow: rgba(129, 140, 248, 0.35);
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Space Grotesk', 'Inter', sans-serif;
+  --font-handwriting: 'Caveat', cursive;
+}
+
+/* ─── Global Resets ────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  font-family: var(--font-sans);
+  background: var(--color-bg-dark);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Prevent mobile browser from hijacking touch gestures on the 3D canvas */
+canvas {
+  touch-action: none;
+}
+
+/* ─── Scrollbar ────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+/* ─── Glassmorphism Utility ────────────────────────────────────── */
+.glass {
+  background: var(--color-bg-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--color-border-glass);
+  border-radius: 16px;
+}
+
+.glass-sm {
+  background: var(--color-bg-glass);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--color-border-glass);
+  border-radius: 10px;
+}
+
+/* ─── Typography ───────────────────────────────────────────────── */
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-handwriting {
+  font-family: var(--font-handwriting);
+}
+
+/* ─── HUD / Readout Panel ──────────────────────────────────────── */
+.hud-value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.hud-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-secondary);
+}
+
+/* ─── Formula Card ─────────────────────────────────────────────── */
+.formula-card {
+  font-family: var(--font-handwriting);
+  font-size: 1.35rem;
+  line-height: 1.8;
+  letter-spacing: 0.01em;
+  color: var(--color-text-primary);
+}
+
+.formula-symbolic {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-accent-primary);
+}
+
+.formula-number-flash {
+  transition: color 0.15s ease, transform 0.15s ease;
+  display: inline-block;
+}
+
+.formula-number-flash.changed {
+  color: #fbbf24;
+  transform: scale(1.15);
+}
+
+/* ─── Button Base ──────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--color-border-glass);
+  background: var(--color-bg-glass);
+  backdrop-filter: blur(8px);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-accent {
+  background: var(--color-accent-primary);
+  border-color: transparent;
+  color: #fff;
+}
+
+.btn-accent:hover {
+  background: #6366f1;
+  border-color: transparent;
+}
+
+.btn-sm {
+  padding: 0.35rem 0.7rem;
+  font-size: 0.75rem;
+  border-radius: 8px;
+}
+
+/* ─── Difficulty Toggle ────────────────────────────────────────── */
+.difficulty-toggle {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--color-border-glass);
+}
+
+.difficulty-toggle button {
+  padding: 0.4rem 0.75rem;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.difficulty-toggle button.active {
+  background: var(--color-accent-primary);
+  color: #fff;
+  box-shadow: 0 2px 12px rgba(129, 140, 248, 0.3);
+}
+
+.difficulty-toggle button:not(.active):hover {
+  color: var(--color-text-primary);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* ─── Challenge Prompt ─────────────────────────────────────────── */
+.challenge-card {
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  background: rgba(251, 191, 36, 0.08);
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+/* ─── Shape Card ───────────────────────────────────────────────── */
+.shape-card {
+  position: relative;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.shape-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+.shape-card .preview-canvas {
+  width: 100%;
+  height: 160px;
+}
+
+/* ─── Progress Ring ────────────────────────────────────────────── */
+.progress-ring circle {
+  transition: stroke-dashoffset 0.5s ease;
+}
+
+/* ─── Badge Pop ────────────────────────────────────────────────── */
+@keyframes badge-pop {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.badge-pop {
+  animation: badge-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* ─── Confetti Burst ───────────────────────────────────────────── */
+@keyframes confetti-fall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100px) rotate(720deg); opacity: 0; }
+}
+
+/* ─── Mini-game strip ──────────────────────────────────── */
+.game-strip {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+}
+
+/* ─── Layout: Detail page split ────────────────────────────────── */
+.detail-split {
+  display: flex;
+  gap: 1rem;
+  flex: 1;
+  min-height: 0;
+}
+
+.detail-stage {
+  flex: 3;
+  position: relative;
+  min-height: 300px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.detail-sidebar {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+  max-height: calc(100vh - 200px);
+}
+
+@media (max-width: 768px) {
+  .detail-split {
+    flex-direction: column;
+  }
+  .detail-stage {
+    min-height: 250px;
+    max-height: 45vh;
+  }
+  .detail-sidebar {
+    max-height: none;
+    padding-right: 0;
+  }
+  .hud-value {
+    font-size: 1.2rem;
+  }
+  .formula-card {
+    font-size: 1.1rem;
+  }
+  .difficulty-toggle button {
+    font-size: 0.68rem;
+    padding: 0.3rem 0.5rem;
+  }
+}
+
+/* ─── Page transitions ─────────────────────────────────────────── */
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.page-enter {
+  animation: page-in 0.4s ease forwards;
+}

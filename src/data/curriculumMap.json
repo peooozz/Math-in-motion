@@ -1,0 +1,119 @@
+{
+  "modules": [
+    {
+      "id": 1,
+      "title": "Rotate a Cube: Understanding Volume",
+      "icon": "cube",
+      "accentColor": "#f43f5e",
+      "difficulty": {
+        "elementary": {
+          "grades": "3–5",
+          "cbse": ["Shapes & Space: Cuboid and Cube", "Counting unit cubes"],
+          "description": "Count unit cubes inside a box to find volume."
+        },
+        "standard": {
+          "grades": "6–8",
+          "cbse": ["Mensuration: Volume of Cuboid", "V = l × w × h"],
+          "description": "Explore how length, width, and height multiply to give volume."
+        },
+        "advanced": {
+          "grades": "9–10",
+          "cbse": ["Surface Area and Volume: Cuboid", "SA:Volume Ratio"],
+          "description": "Compare surface area and volume, explore scaling relationships."
+        }
+      }
+    },
+    {
+      "id": 2,
+      "title": "Slice a Cylinder: Discovering Cross-Sections",
+      "icon": "cylinder",
+      "accentColor": "#8b5cf6",
+      "difficulty": {
+        "elementary": {
+          "grades": "3–5",
+          "cbse": ["Shapes & Space: Circle and Rectangle"],
+          "description": "Cut a cylinder and see what flat shape you get!"
+        },
+        "standard": {
+          "grades": "6–8",
+          "cbse": ["Mensuration: Cross-sections", "Circle, Ellipse"],
+          "description": "Discover how slicing angle changes the cross-section shape."
+        },
+        "advanced": {
+          "grades": "9–10",
+          "cbse": ["Conic Sections: Introduction", "Ellipse, Parabola, Hyperbola"],
+          "description": "Connect cylinder/cone slices to conic sections."
+        }
+      }
+    },
+    {
+      "id": 3,
+      "title": "Drag Points to Change Triangles",
+      "icon": "triangle",
+      "accentColor": "#10b981",
+      "difficulty": {
+        "elementary": {
+          "grades": "3–5",
+          "cbse": ["Geometry: Types of Triangles", "Measuring Angles"],
+          "description": "Drag corners to make different triangles."
+        },
+        "standard": {
+          "grades": "6–8",
+          "cbse": ["Triangles: Properties", "Angle Sum Property", "Area of Triangle"],
+          "description": "Explore side lengths, angles, and area relationships."
+        },
+        "advanced": {
+          "grades": "9–10",
+          "cbse": ["Triangle Inequality Theorem", "Congruence & Similarity"],
+          "description": "Test the triangle inequality and discover congruence conditions."
+        }
+      }
+    },
+    {
+      "id": 4,
+      "title": "Stretch Shapes: Area/Volume in Real Time",
+      "icon": "blob",
+      "accentColor": "#f59e0b",
+      "difficulty": {
+        "elementary": {
+          "grades": "3–5",
+          "cbse": ["Perimeter & Area: Rectangle"],
+          "description": "Stretch a rectangle and watch the area grow."
+        },
+        "standard": {
+          "grades": "6–8",
+          "cbse": ["Mensuration: Scaling & Area", "Quadratic Growth"],
+          "description": "See how doubling a side affects area vs. volume."
+        },
+        "advanced": {
+          "grades": "9–10",
+          "cbse": ["Surface Area & Volume: Scaling Laws", "Linear vs Quadratic vs Cubic"],
+          "description": "Graph how area and volume scale differently with stretch factor."
+        }
+      }
+    },
+    {
+      "id": 5,
+      "title": "Create Angles with Interactive Rays",
+      "icon": "angleRays",
+      "accentColor": "#06b6d4",
+      "difficulty": {
+        "elementary": {
+          "grades": "3–5",
+          "cbse": ["Geometry: Angles — Acute, Right, Obtuse"],
+          "description": "Drag a ray to make different types of angles."
+        },
+        "standard": {
+          "grades": "6–8",
+          "cbse": ["Lines & Angles: Complementary, Supplementary", "Measuring Angles"],
+          "description": "Explore angle pairs and learn to measure in degrees."
+        },
+        "advanced": {
+          "grades": "9–10",
+          "cbse": ["Trigonometry: Angles and the Unit Circle", "sin θ, cos θ"],
+          "description": "Connect angles to the unit circle and trigonometric ratios."
+        }
+      }
+    }
+  ]
+}
