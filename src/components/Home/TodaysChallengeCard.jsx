@@ -1,6 +1,8 @@
 /**
  * TodaysChallengeCard.jsx
- * A random daily challenge from any shape to entice exploration.
+ * ═══════════════════════════════════════════════════════════════
+ * Random Daily Challenge for Kids (Light Theme).
+ * ═══════════════════════════════════════════════════════════════
  */
 import React, { useMemo } from 'react';
 import { shapeConfig, SHAPES_ORDER } from '../../data/shapeConfig';
@@ -9,7 +11,6 @@ import useAppStore from '../../store/useAppStore';
 export default function TodaysChallengeCard() {
   const setCurrentShape = useAppStore((s) => s.setCurrentShape);
 
-  // Pick a random shape + challenge (seeded by day for consistency)
   const { shapeId, challenge, config } = useMemo(() => {
     const dayIdx = Math.floor(Date.now() / 86400000) % SHAPES_ORDER.length;
     const id = SHAPES_ORDER[dayIdx];
@@ -21,12 +22,13 @@ export default function TodaysChallengeCard() {
   return (
     <div
       style={{
-        padding: '1rem 1.25rem',
-        borderRadius: '16px',
-        background: `linear-gradient(135deg, ${config.accentColor}12, ${config.accentColor}06)`,
-        border: `1px solid ${config.accentColor}25`,
+        padding: '1.1rem 1.4rem',
+        borderRadius: '20px',
+        background: '#ffffff',
+        border: `2.5px solid ${config.accentColor}40`,
+        boxShadow: `0 10px 25px ${config.accentColor}15`,
         cursor: 'pointer',
-        transition: 'all 0.2s ease',
+        transition: 'all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)',
       }}
       onClick={() => setCurrentShape(shapeId)}
       role="button"
@@ -37,39 +39,40 @@ export default function TodaysChallengeCard() {
         display: 'flex',
         alignItems: 'center',
         gap: '0.4rem',
-        marginBottom: '0.4rem',
+        marginBottom: '0.3rem',
       }}>
-        <span style={{ fontSize: '1.1rem' }}>🎯</span>
+        <span style={{ fontSize: '1.2rem' }}>🎯</span>
         <span style={{
           fontFamily: "'Space Grotesk', sans-serif",
-          fontWeight: 700,
-          fontSize: '0.85rem',
+          fontWeight: 800,
+          fontSize: '0.92rem',
           color: config.accentColor,
         }}>
-          Today's Challenge
+          Today's Fun Challenge
         </span>
         <span style={{
           marginLeft: 'auto',
-          fontSize: '1rem',
+          fontSize: '1.2rem',
         }}>
           {config.emoji}
         </span>
       </div>
       <p style={{
         margin: 0,
-        fontSize: '0.85rem',
-        color: 'var(--color-text-secondary)',
-        lineHeight: 1.5,
+        fontSize: '0.86rem',
+        fontWeight: 600,
+        color: '#334155',
+        lineHeight: 1.4,
       }}>
         {challenge}
       </p>
       <div style={{
-        marginTop: '0.6rem',
-        fontSize: '0.75rem',
-        fontWeight: 600,
+        marginTop: '0.5rem',
+        fontSize: '0.8rem',
+        fontWeight: 800,
         color: config.accentColor,
       }}>
-        Try it with {config.name} →
+        Play with {config.name} →
       </div>
     </div>
   );

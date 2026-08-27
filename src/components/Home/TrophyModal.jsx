@@ -1,9 +1,7 @@
 /**
  * TrophyModal.jsx
  * ═══════════════════════════════════════════════════════════════
- * Trophy Room & 3D Material / Skin Customization Shop.
- * Shows player progression, collectible badges, and allows
- * purchasing & equipping custom 3D shader skins with earned Gems.
+ * Sunny & Cheerful 3D Toy Skin Shop & Trophy Room for Kids.
  * ═══════════════════════════════════════════════════════════════
  */
 import React, { useState } from 'react';
@@ -13,17 +11,17 @@ import sound from '../../utils/soundEffects';
 
 const BADGES_LIST = [
   { id: 'first_drag', name: 'First Touch', emoji: '👆', desc: 'Manipulated your first 3D dimension handle.' },
-  { id: 'master-cube', name: 'Cube Conqueror', emoji: '🧊', desc: 'Matched target volume on the Cube.' },
-  { id: 'master-cylinder', name: 'Cylinder Captain', emoji: '🥫', desc: 'Matched target volume on the Cylinder.' },
-  { id: 'master-sphere', name: 'Sphere Sovereign', emoji: '🏀', desc: 'Mastered spherical surface area & volume.' },
-  { id: 'master-cone', name: 'Cone Connoisseur', emoji: '🍦', desc: 'Discovered the ⅓ cone-to-cylinder relationship.' },
-  { id: 'master-pyramid', name: 'Pyramid Pharaoh', emoji: '🔺', desc: 'Constructed an ancient volume-accurate pyramid.' },
-  { id: 'master-prism', name: 'Prism Prodigy', emoji: '🔷', desc: 'Mastered triangular prism volume calculations.' },
+  { id: 'master-cube', name: 'Cube Master', emoji: '🧊', desc: 'Matched target volume on the Cube.' },
+  { id: 'master-cylinder', name: 'Cylinder Star', emoji: '🥫', desc: 'Matched target volume on the Cylinder.' },
+  { id: 'master-sphere', name: 'Sphere Champion', emoji: '🏀', desc: 'Mastered spherical geometry.' },
+  { id: 'master-cone', name: 'Cone Expert', emoji: '🍦', desc: 'Discovered the ⅓ cone-to-cylinder relationship.' },
+  { id: 'master-pyramid', name: 'Pyramid Builder', emoji: '🔺', desc: 'Constructed an ancient pyramid.' },
+  { id: 'master-prism', name: 'Prism Pro', emoji: '🔷', desc: 'Mastered triangular prism volume.' },
   { id: 'master-triangle', name: 'Triangle Titan', emoji: '📐', desc: 'Perfected 2D base × height calculations.' },
-  { id: 'streak_3', name: 'Triple Streak', emoji: '🔥', desc: 'Hit 3 target volume matches in a row!' },
-  { id: 'quest_5', name: 'Quest Adventurer', emoji: '🗺️', desc: 'Completed 5 adventure quests!' },
-  { id: 'skin_collector', name: 'Style Icon', emoji: '✨', desc: 'Unlocked your first custom 3D shape skin!' },
-  { id: 'grand_geometer', name: 'Grand Geometer', emoji: '🎓', desc: 'Reached player level 10 and completed the exam!' },
+  { id: 'streak_3', name: 'Triple Streak', emoji: '🔥', desc: 'Hit 3 target matches in a row!' },
+  { id: 'quest_5', name: 'Adventurer', emoji: '🗺️', desc: 'Completed 5 adventure quests!' },
+  { id: 'skin_collector', name: 'Style Star', emoji: '✨', desc: 'Unlocked your first 3D toy skin!' },
+  { id: 'grand_geometer', name: 'Grand Geometer', emoji: '🎓', desc: 'Reached player level 10!' },
 ];
 
 export default function TrophyModal({ isOpen, onClose }) {
@@ -57,7 +55,7 @@ export default function TrophyModal({ isOpen, onClose }) {
       position: 'fixed',
       inset: 0,
       zIndex: 60,
-      background: 'rgba(15, 13, 26, 0.85)',
+      background: 'rgba(15, 23, 42, 0.45)',
       backdropFilter: 'blur(8px)',
       display: 'flex',
       alignItems: 'center',
@@ -70,9 +68,9 @@ export default function TrophyModal({ isOpen, onClose }) {
         width: '100%',
         maxHeight: '90vh',
         borderRadius: '24px',
-        background: 'linear-gradient(135deg, rgba(30, 27, 50, 0.98), rgba(15, 13, 26, 0.99))',
-        border: '1px solid rgba(255, 255, 255, 0.12)',
-        boxShadow: '0 24px 64px rgba(0,0,0,0.6)',
+        background: '#ffffff',
+        border: '2px solid #e2e8f0',
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
@@ -80,25 +78,24 @@ export default function TrophyModal({ isOpen, onClose }) {
         {/* Header */}
         <div style={{
           padding: '1.2rem 1.5rem',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          borderBottom: '1.5px solid #e2e8f0',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
+          background: '#f8fafc',
         }}>
           <div>
             <h2 style={{
               fontFamily: "'Space Grotesk', sans-serif",
-              fontWeight: 800,
-              fontSize: '1.3rem',
+              fontWeight: 900,
+              fontSize: '1.35rem',
               margin: '0 0 0.2rem',
-              background: 'linear-gradient(135deg, #fbbf24, #f59e0b)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
+              color: '#0f172a',
             }}>
-              🏆 Trophy Room & Skin Shop
+              🎨 3D Toy Skins & Trophies
             </h2>
-            <div style={{ fontSize: '0.78rem', color: 'var(--color-text-secondary)' }}>
-              Level {levelInfo.level} · {levelInfo.title} · {player.gems} 💎 Gems Available
+            <div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>
+              Level {levelInfo.level} · {levelInfo.title} · <span style={{ color: '#059669', fontWeight: 800 }}>{player.gems} 💎 Gems</span>
             </div>
           </div>
 
@@ -108,19 +105,19 @@ export default function TrophyModal({ isOpen, onClose }) {
               sound.playPop();
               onClose();
             }}
-            style={{ borderRadius: '50%', width: '32px', height: '32px', padding: 0 }}
+            style={{ borderRadius: '50%', width: '34px', height: '34px', padding: 0 }}
           >
             ✕
           </button>
         </div>
 
-        {/* Tab switcher */}
+        {/* Tab Switcher */}
         <div style={{
           display: 'flex',
           gap: '0.4rem',
           padding: '0.6rem 1.5rem',
-          borderBottom: '1px solid rgba(255,255,255,0.06)',
-          background: 'rgba(0,0,0,0.2)',
+          borderBottom: '1.5px solid #e2e8f0',
+          background: '#ffffff',
         }}>
           <button
             className={`btn btn-sm ${activeTab === 'skins' ? 'btn-accent' : ''}`}
@@ -147,17 +144,17 @@ export default function TrophyModal({ isOpen, onClose }) {
               setActiveTab('stats');
             }}
           >
-            📊 Player Stats
+            📊 Stats
           </button>
         </div>
 
         {/* Tab Content */}
-        <div style={{ padding: '1.2rem 1.5rem', overflowY: 'auto', flex: 1 }}>
+        <div style={{ padding: '1.2rem 1.5rem', overflowY: 'auto', flex: 1, background: '#f8fafc' }}>
           {/* ─── SKINS SHOP ─── */}
           {activeTab === 'skins' && (
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))',
               gap: '0.75rem',
             }}>
               {SHAPE_SKINS.map((skin) => {
@@ -169,26 +166,24 @@ export default function TrophyModal({ isOpen, onClose }) {
                   <div
                     key={skin.id}
                     style={{
-                      padding: '0.85rem',
-                      borderRadius: '14px',
-                      background: isEquipped
-                        ? 'rgba(129, 140, 248, 0.15)'
-                        : 'rgba(255,255,255,0.03)',
-                      border: `1px solid ${isEquipped ? '#818cf8' : 'rgba(255,255,255,0.08)'}`,
+                      padding: '0.9rem',
+                      borderRadius: '18px',
+                      background: isEquipped ? '#eef2ff' : '#ffffff',
+                      border: `2px solid ${isEquipped ? '#6366f1' : '#e2e8f0'}`,
                       display: 'flex',
                       flexDirection: 'column',
                       justifyContent: 'space-between',
-                      transition: 'all 0.2s ease',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
                     }}
                   >
                     <div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.25rem' }}>
-                        <span style={{ fontSize: '1.4rem' }}>{skin.emoji}</span>
-                        <strong style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '0.95rem' }}>
+                        <span style={{ fontSize: '1.5rem' }}>{skin.emoji}</span>
+                        <strong style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '1rem', color: '#0f172a' }}>
                           {skin.name}
                         </strong>
                       </div>
-                      <p style={{ fontSize: '0.74rem', color: 'var(--color-text-secondary)', margin: '0 0 0.6rem', lineHeight: 1.35 }}>
+                      <p style={{ fontSize: '0.75rem', color: '#64748b', margin: '0 0 0.75rem', lineHeight: 1.35 }}>
                         {skin.desc}
                       </p>
                     </div>
@@ -199,7 +194,7 @@ export default function TrophyModal({ isOpen, onClose }) {
                       disabled={!isUnlocked && !canAfford}
                       style={{
                         width: '100%',
-                        fontSize: '0.75rem',
+                        fontSize: '0.78rem',
                         opacity: !isUnlocked && !canAfford ? 0.5 : 1,
                       }}
                     >
@@ -215,33 +210,34 @@ export default function TrophyModal({ isOpen, onClose }) {
           {activeTab === 'badges' && (
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-              gap: '0.6rem',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))',
+              gap: '0.65rem',
             }}>
               {BADGES_LIST.map((b) => (
                 <div
                   key={b.id}
                   style={{
-                    padding: '0.75rem',
-                    borderRadius: '12px',
-                    background: 'rgba(255,255,255,0.03)',
-                    border: '1px solid rgba(255,255,255,0.06)',
+                    padding: '0.8rem',
+                    borderRadius: '16px',
+                    background: '#ffffff',
+                    border: '1.5px solid #e2e8f0',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '0.6rem',
+                    gap: '0.65rem',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
                   }}
                 >
                   <span style={{ fontSize: '1.6rem', flexShrink: 0 }}>{b.emoji}</span>
                   <div>
                     <div style={{
-                      fontWeight: 700,
-                      fontSize: '0.82rem',
+                      fontWeight: 800,
+                      fontSize: '0.85rem',
                       fontFamily: "'Space Grotesk', sans-serif",
-                      color: '#fbbf24',
+                      color: '#0f172a',
                     }}>
                       {b.name}
                     </div>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--color-text-secondary)', lineHeight: 1.3 }}>
+                    <div style={{ fontSize: '0.72rem', color: '#64748b', lineHeight: 1.3 }}>
                       {b.desc}
                     </div>
                   </div>
@@ -255,20 +251,21 @@ export default function TrophyModal({ isOpen, onClose }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
               <div style={{
                 padding: '1rem',
-                borderRadius: '14px',
-                background: 'rgba(129, 140, 248, 0.08)',
-                border: '1px solid rgba(129, 140, 248, 0.2)',
+                borderRadius: '18px',
+                background: '#ffffff',
+                border: '2px solid #e2e8f0',
+                boxShadow: '0 4px 14px rgba(0,0,0,0.04)',
               }}>
-                <div style={{ fontSize: '0.75rem', color: '#818cf8', fontWeight: 700, marginBottom: '0.2rem' }}>
+                <div style={{ fontSize: '0.75rem', color: '#4f46e5', fontWeight: 800, marginBottom: '0.2rem' }}>
                   LEVEL PROGRESSION
                 </div>
-                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.4rem' }}>
+                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 900, fontSize: '1.4rem', color: '#0f172a' }}>
                   {levelInfo.title}
                 </div>
                 <div style={{
                   height: '8px',
                   borderRadius: '4px',
-                  background: 'rgba(255,255,255,0.1)',
+                  background: '#e2e8f0',
                   margin: '0.6rem 0 0.3rem',
                   overflow: 'hidden',
                 }}>
@@ -276,43 +273,43 @@ export default function TrophyModal({ isOpen, onClose }) {
                     height: '100%',
                     borderRadius: '4px',
                     width: `${levelInfo.progressPct}%`,
-                    background: 'linear-gradient(90deg, #818cf8, #c084fc)',
+                    background: 'linear-gradient(90deg, #6366f1, #ec4899)',
                   }} />
                 </div>
-                <div style={{ fontSize: '0.72rem', color: 'var(--color-text-secondary)', display: 'flex', justifyContent: 'space-between' }}>
+                <div style={{ fontSize: '0.74rem', color: '#64748b', display: 'flex', justifyContent: 'space-between', fontWeight: 600 }}>
                   <span>{levelInfo.xpInLevel} XP in Level</span>
-                  <span>{levelInfo.xpNeeded} XP Needed for Next Rank</span>
+                  <span>{levelInfo.xpNeeded} XP to Next Rank</span>
                 </div>
               </div>
 
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(3, 1fr)',
-                gap: '0.6rem',
+                gap: '0.65rem',
                 textAlign: 'center',
               }}>
-                <div style={{ padding: '0.8rem', borderRadius: '12px', background: 'rgba(255,255,255,0.03)' }}>
-                  <div style={{ fontSize: '1.4rem' }}>⭐</div>
-                  <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.2rem', color: '#fbbf24' }}>
+                <div style={{ padding: '0.9rem', borderRadius: '16px', background: '#ffffff', border: '1.5px solid #e2e8f0' }}>
+                  <div style={{ fontSize: '1.5rem' }}>⭐</div>
+                  <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 900, fontSize: '1.3rem', color: '#d97706' }}>
                     {player.stars}
                   </div>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>Quest Stars</div>
+                  <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600 }}>Stars</div>
                 </div>
 
-                <div style={{ padding: '0.8rem', borderRadius: '12px', background: 'rgba(255,255,255,0.03)' }}>
-                  <div style={{ fontSize: '1.4rem' }}>💎</div>
-                  <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.2rem', color: '#34d399' }}>
+                <div style={{ padding: '0.9rem', borderRadius: '16px', background: '#ffffff', border: '1.5px solid #e2e8f0' }}>
+                  <div style={{ fontSize: '1.5rem' }}>💎</div>
+                  <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 900, fontSize: '1.3rem', color: '#059669' }}>
                     {player.gems}
                   </div>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>Gems</div>
+                  <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600 }}>Gems</div>
                 </div>
 
-                <div style={{ padding: '0.8rem', borderRadius: '12px', background: 'rgba(255,255,255,0.03)' }}>
-                  <div style={{ fontSize: '1.4rem' }}>🔥</div>
-                  <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.2rem', color: '#f97316' }}>
+                <div style={{ padding: '0.9rem', borderRadius: '16px', background: '#ffffff', border: '1.5px solid #e2e8f0' }}>
+                  <div style={{ fontSize: '1.5rem' }}>🔥</div>
+                  <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 900, fontSize: '1.3rem', color: '#ea580c' }}>
                     {player.streak}
                   </div>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>Day Streak</div>
+                  <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 600 }}>Day Streak</div>
                 </div>
               </div>
             </div>

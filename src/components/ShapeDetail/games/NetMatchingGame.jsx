@@ -1,9 +1,7 @@
 /**
  * NetMatchingGame.jsx
  * ═══════════════════════════════════════════════════════════════
- * 3D Net Folding & Pattern Matching Lab.
- * Shows flat 2D nets that fold into 3D solids, with an interactive
- * fold-slider and a "Will it fold?" quiz to train spatial intuition.
+ * Origami Net Folding Simulator & Quiz (Light & Child-Friendly).
  * ═══════════════════════════════════════════════════════════════
  */
 import React, { useState } from 'react';
@@ -12,53 +10,34 @@ import sound from '../../../utils/soundEffects';
 
 const NET_QUIZZES = {
   cube: {
-    question: 'How many identical square faces are in a complete cube net?',
-    options: ['4 faces', '5 faces', '6 faces', '8 faces'],
+    question: 'How many square faces are in a cube net?',
+    options: ['4 squares', '5 squares', '6 squares', '8 squares'],
     correctIdx: 2,
-    explanation: 'A cube has exactly 6 equal square faces that fold together into a closed box!',
-    netDesc: 'Standard Latin Cross (T-shape): 1 top, 1 bottom, and 4 perimeter squares.',
+    explanation: 'A cube has 6 equal square faces that fold into a closed box!',
   },
   cylinder: {
-    question: 'When you unroll the curved surface of a cylinder, what 2D shape does it form?',
-    options: ['A circle', 'A rectangle', 'A triangle', 'An oval'],
+    question: 'When you unroll the curved side of a can, what shape is it?',
+    options: ['A circle', 'A rectangle', 'A triangle'],
     correctIdx: 1,
-    explanation: 'Unrolling the curved wall gives a rectangle with width = 2πr (circumference) and height = h!',
-    netDesc: '2 identical circular lids + 1 rectangular wrap.',
+    explanation: 'The curved wall unwraps into a flat rectangle!',
   },
   cone: {
-    question: 'What shapes make up the flat net of a solid cone with a base?',
-    options: [
-      '1 circle + 1 circular sector (pie slice)',
-      '2 triangles + 1 square',
-      '2 circles + 1 rectangle',
-      '1 rectangle + 1 triangle',
-    ],
+    question: 'What shapes make up a cone paper pattern?',
+    options: ['1 circle + 1 pie slice fan', '2 triangles + 1 square'],
     correctIdx: 0,
-    explanation: 'The curved side unwraps into a circular sector (pie slice), and the base is a flat circle!',
-    netDesc: '1 circular base + 1 curved fan sector.',
+    explanation: '1 circular base + 1 pie-slice curved fan!',
   },
   pyramid: {
-    question: 'What shapes make up the net of a square-based pyramid?',
-    options: [
-      '4 squares + 1 triangle',
-      '1 square base + 4 identical triangles',
-      '6 triangles',
-      '2 squares + 2 triangles',
-    ],
-    correctIdx: 1,
-    explanation: 'A central square base with 4 triangular flaps that fold up to meet at the apex!',
-    netDesc: '1 central square + 4 surrounding triangle petals.',
+    question: 'What shapes make up a pyramid net?',
+    options: ['1 square base + 4 triangles', '6 triangles'],
+    correctIdx: 0,
+    explanation: '1 square base with 4 triangular flaps that meet at the top!',
   },
   default: {
-    question: 'What is a 3D geometry "net"?',
-    options: [
-      'A fishing net for catching shapes',
-      'A 2D flat pattern that can be folded into a 3D solid',
-      'The wireframe grid of a 3D model',
-    ],
-    correctIdx: 1,
-    explanation: 'A net is a 2D pattern that folds seamlessly into a 3D solid without overlapping faces!',
-    netDesc: 'Flat 2D arrangement of connected polygon faces.',
+    question: 'What is a 3D geometry net?',
+    options: ['A flat 2D pattern that folds into a 3D toy', 'A fishing net'],
+    correctIdx: 0,
+    explanation: 'A flat pattern that folds into a 3D solid!',
   },
 };
 
@@ -66,7 +45,7 @@ export default function NetMatchingGame({ shapeId }) {
   const addXp = useAppStore((s) => s.addXp);
   const addGems = useAppStore((s) => s.addGems);
 
-  const [foldProgress, setFoldProgress] = useState(0); // 0 = flat net, 100 = folded 3D
+  const [foldProgress, setFoldProgress] = useState(0);
   const [selectedOpt, setSelectedOpt] = useState(null);
   const [quizAnswered, setQuizAnswered] = useState(false);
 
@@ -98,12 +77,12 @@ export default function NetMatchingGame({ shapeId }) {
 
   return (
     <div style={{ padding: '0.2rem 0' }}>
-      {/* 2D Net Visualizer / Fold Controller */}
+      {/* 2D Net Fold Controller */}
       <div style={{
-        padding: '0.8rem',
-        borderRadius: '12px',
-        background: 'rgba(255,255,255,0.03)',
-        border: '1px solid rgba(255,255,255,0.08)',
+        padding: '0.85rem',
+        borderRadius: '16px',
+        background: 'linear-gradient(135deg, #fdf4ff, #ffffff)',
+        border: '2px solid #f0abfc',
         marginBottom: '0.75rem',
       }}>
         <div style={{
@@ -113,23 +92,22 @@ export default function NetMatchingGame({ shapeId }) {
           marginBottom: '0.4rem',
         }}>
           <span style={{
-            fontSize: '0.82rem',
-            fontWeight: 700,
+            fontSize: '0.84rem',
+            fontWeight: 800,
             fontFamily: "'Space Grotesk', sans-serif",
-            color: '#818cf8',
+            color: '#a21caf',
           }}>
-            🧩 Interactive Net Folding Simulator
+            🧩 Origami Net Folding Simulator
           </span>
           <span style={{
-            fontSize: '0.75rem',
-            fontWeight: 700,
-            color: foldProgress === 100 ? '#10b981' : foldProgress === 0 ? '#fbbf24' : '#06b6d4',
+            fontSize: '0.76rem',
+            fontWeight: 800,
+            color: foldProgress === 100 ? '#15803d' : '#a21caf',
           }}>
-            {foldProgress === 0 ? '📄 Flat 2D Net' : foldProgress === 100 ? '📦 Fully Folded 3D' : `🔄 Folding: ${foldProgress}%`}
+            {foldProgress === 0 ? '📄 Flat Pattern' : foldProgress === 100 ? '📦 Closed 3D Toy!' : `Folding: ${foldProgress}%`}
           </span>
         </div>
 
-        {/* Fold slider */}
         <input
           type="range"
           min="0"
@@ -139,71 +117,62 @@ export default function NetMatchingGame({ shapeId }) {
           style={{
             width: '100%',
             cursor: 'pointer',
-            accentColor: '#818cf8',
-            marginBottom: '0.4rem',
+            accentColor: '#c026d3',
+            marginBottom: '0.3rem',
           }}
         />
 
         <div style={{
           fontSize: '0.74rem',
-          color: 'var(--color-text-secondary)',
+          color: '#64748b',
           display: 'flex',
           justifyContent: 'space-between',
+          fontWeight: 600,
         }}>
-          <span>0% (Unfolded Paper Pattern)</span>
-          <span>100% (Closed 3D Solid)</span>
-        </div>
-
-        <div style={{
-          marginTop: '0.5rem',
-          fontSize: '0.78rem',
-          color: 'var(--color-text-muted)',
-          background: 'rgba(0,0,0,0.2)',
-          padding: '0.4rem 0.6rem',
-          borderRadius: '6px',
-        }}>
-          📐 <strong>Net Topology:</strong> {quiz.netDesc}
+          <span>0% (Flat Paper)</span>
+          <span>100% (Folded Solid)</span>
         </div>
       </div>
 
       {/* Spatial Quiz */}
       <div style={{
-        fontSize: '0.82rem',
-        fontWeight: 700,
+        fontSize: '0.84rem',
+        fontWeight: 800,
         fontFamily: "'Space Grotesk', sans-serif",
         marginBottom: '0.5rem',
+        color: '#0f172a',
       }}>
-        ❓ <span style={{ color: '#fbbf24' }}>Spatial Challenge:</span> {quiz.question}
+        ❓ <span style={{ color: '#d97706' }}>Question:</span> {quiz.question}
       </div>
 
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
         gap: '0.4rem',
         marginBottom: '0.6rem',
       }}>
         {quiz.options.map((opt, idx) => {
           let style = {
-            padding: '0.45rem 0.65rem',
+            padding: '0.55rem 0.8rem',
             textAlign: 'left',
-            borderRadius: '8px',
-            fontSize: '0.78rem',
-            fontWeight: 600,
-            border: '1px solid rgba(255,255,255,0.08)',
-            background: 'rgba(255,255,255,0.03)',
-            color: 'var(--color-text-primary)',
+            borderRadius: '12px',
+            fontSize: '0.8rem',
+            fontWeight: 700,
+            border: '2px solid #e2e8f0',
+            background: '#ffffff',
+            color: '#0f172a',
             cursor: quizAnswered ? 'default' : 'pointer',
           };
 
           if (quizAnswered) {
             if (idx === quiz.correctIdx) {
-              style.background = 'rgba(16, 185, 129, 0.2)';
+              style.background = '#f0fdf4';
               style.borderColor = '#10b981';
-              style.color = '#34d399';
+              style.color = '#15803d';
             } else if (selectedOpt === idx) {
-              style.background = 'rgba(239, 68, 68, 0.2)';
+              style.background = '#fef2f2';
               style.borderColor = '#ef4444';
-              style.color = '#f87171';
+              style.color = '#b91c1c';
             }
           }
 
@@ -222,17 +191,14 @@ export default function NetMatchingGame({ shapeId }) {
 
       {quizAnswered && (
         <div style={{
-          padding: '0.6rem 0.8rem',
-          borderRadius: '8px',
-          background: selectedOpt === quiz.correctIdx ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-          border: `1px solid ${selectedOpt === quiz.correctIdx ? '#10b98133' : '#ef444433'}`,
-          fontSize: '0.76rem',
-          lineHeight: 1.4,
-          color: 'var(--color-text-secondary)',
+          padding: '0.65rem 0.85rem',
+          borderRadius: '12px',
+          background: selectedOpt === quiz.correctIdx ? '#f0fdf4' : '#fef2f2',
+          border: `2px solid ${selectedOpt === quiz.correctIdx ? '#86efac' : '#fca5a5'}`,
+          fontSize: '0.78rem',
+          color: selectedOpt === quiz.correctIdx ? '#15803d' : '#b91c1c',
+          fontWeight: 600,
         }}>
-          <strong style={{ color: selectedOpt === quiz.correctIdx ? '#34d399' : '#f87171' }}>
-            {selectedOpt === quiz.correctIdx ? '✨ Spot On! (+50 XP, +6 💎)' : '💡 Explanation:'}
-          </strong>{' '}
           {quiz.explanation}
         </div>
       )}

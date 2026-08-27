@@ -1,9 +1,9 @@
 /**
  * ShapeDetailPage.jsx
  * ═══════════════════════════════════════════════════════════════
- * Reusable 3D Detail Page Template.
- * Integrates: 3D Stage + Draggable Handles, Live Formula Substitutions,
- * Quest Mode Objective Tracker, Geo the Robot Companion, and Arcade Games.
+ * Sunny & Light-Themed 3D Detail Page Template.
+ * Integrates: 3D Stage + Draggable Handles, Visual Formula Chips,
+ * Geo the Robot Mascot, and the 5 Interactive Labs / Arcade Games.
  * ═══════════════════════════════════════════════════════════════
  */
 import React, { useState, useCallback, useMemo } from 'react';
@@ -82,32 +82,33 @@ export default function ShapeDetailPage({ shapeId }) {
         height: '100vh',
         overflow: 'hidden',
         position: 'relative',
+        background: '#f8fafc',
       }}
     >
-      {/* ═══ ACTIVE QUEST MODAL OVERLAY ═══ */}
+      {/* Active Quest Modal HUD */}
       {activeQuestId && (
         <QuestModal questId={activeQuestId} dimensions={dimensions} />
       )}
 
-      {/* ═══ TROPHY ROOM & SKINS MODAL ═══ */}
+      {/* Trophy & Skin Shop Modal */}
       <TrophyModal isOpen={showTrophy} onClose={() => setShowTrophy(false)} />
 
-      {/* ═══ TOP BAR ═══ */}
+      {/* ═══ TOP BAR (LIGHT & SUNNY) ═══ */}
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '0.5rem 1rem',
-          borderBottom: '1px solid rgba(255,255,255,0.06)',
+          padding: '0.5rem 1.2rem',
+          borderBottom: '1.5px solid #e2e8f0',
           flexShrink: 0,
           gap: '0.5rem',
           flexWrap: 'wrap',
-          background: 'rgba(15, 13, 26, 0.75)',
-          backdropFilter: 'blur(8px)',
+          background: '#ffffff',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
         }}
       >
-        {/* Left: Navigation Buttons */}
+        {/* Navigation Buttons */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
           <button className="btn btn-sm" onClick={goHome}>
             ← Gallery
@@ -120,35 +121,35 @@ export default function ShapeDetailPage({ shapeId }) {
           </button>
         </div>
 
-        {/* Center: Shape Title */}
+        {/* Shape Name Title */}
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
             fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 800,
-            fontSize: '1.15rem',
+            fontWeight: 900,
+            fontSize: '1.2rem',
+            color: '#0f172a',
           }}
         >
-          <span style={{ fontSize: '1.4rem' }}>{config.emoji}</span>
+          <span style={{ fontSize: '1.5rem' }}>{config.emoji}</span>
           <span>{config.name}</span>
         </div>
 
         {/* Right: Gamification Chips & Difficulty */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
           <button
             className="btn btn-sm"
             onClick={() => {
               sound.playPop();
               setShowTrophy(true);
             }}
-            title="Open Trophy Room & Skins"
             style={{
-              background: 'rgba(251, 191, 36, 0.12)',
-              borderColor: 'rgba(251, 191, 36, 0.25)',
-              color: '#fbbf24',
-              fontWeight: 700,
+              background: '#fef3c7',
+              borderColor: '#fde68a',
+              color: '#b45309',
+              fontWeight: 800,
             }}
           >
             🏆 {player.gems} 💎
@@ -160,7 +161,7 @@ export default function ShapeDetailPage({ shapeId }) {
               background: 'none',
               border: 'none',
               cursor: 'pointer',
-              fontSize: '1rem',
+              fontSize: '1.1rem',
               padding: '0 0.2rem',
             }}
             title={soundEnabled ? 'Mute sound' : 'Unmute sound'}
@@ -175,7 +176,7 @@ export default function ShapeDetailPage({ shapeId }) {
       {/* ═══ MAIN SPLIT VIEW ═══ */}
       <div
         className="detail-split"
-        style={{ padding: '0.5rem 0.75rem', flex: 1, minHeight: 0 }}
+        style={{ padding: '0.6rem 0.8rem', flex: 1, minHeight: 0 }}
       >
         {/* ─── 3D STAGE ─── */}
         <div className="detail-stage">
@@ -196,8 +197,8 @@ export default function ShapeDetailPage({ shapeId }) {
           <div
             style={{
               position: 'absolute',
-              bottom: '0.75rem',
-              left: '0.75rem',
+              bottom: '0.8rem',
+              left: '0.8rem',
               display: 'flex',
               gap: '0.4rem',
               zIndex: 10,
@@ -207,10 +208,10 @@ export default function ShapeDetailPage({ shapeId }) {
               className={`btn btn-sm ${seeInside ? 'btn-accent' : ''}`}
               onClick={toggleSeeInside}
             >
-              {seeInside ? '👁️ Solid' : '👁️ See Inside'}
+              {seeInside ? '👁️ Solid Toy' : '🧱 Block Grid (Inside)'}
             </button>
             <button className="btn btn-sm" onClick={handleReset}>
-              🔄 Reset
+              🔄 Reset Size
             </button>
           </div>
         </div>
@@ -219,37 +220,39 @@ export default function ShapeDetailPage({ shapeId }) {
         <div className="detail-sidebar">
           {/* Geo Robot Companion */}
           <GeoCompanion
-            message={`Explore the ${config.name}! Drag the colored handles to resize and watch the numbers multiply live!`}
+            message={`Drag the colored dots on the ${config.name} to see the formula chips multiply in real time!`}
           />
 
-          {/* Live Dimensions Card */}
+          {/* Live Dimensions */}
           <LiveDimensionsCard shapeId={shapeId} dimensions={dimensions} />
 
-          {/* Live Formula Card */}
+          {/* Visual Formula Discovery Card */}
           <LiveFormulaCard shapeId={shapeId} dimensions={dimensions} />
 
-          {/* Challenge prompt */}
+          {/* Challenge Prompt */}
           {challenge && <ChallengePrompt text={challenge} />}
         </div>
       </div>
 
-      {/* ═══ BOTTOM BAR (MINI-GAMES & NAVIGATION) ═══ */}
+      {/* ═══ BOTTOM BAR (MINI-GAMES & LABS) ═══ */}
       <div
         style={{
-          padding: '0.4rem 0.75rem 0.6rem',
-          borderTop: '1px solid rgba(255,255,255,0.06)',
+          padding: '0.4rem 0.8rem 0.6rem',
+          borderTop: '1.5px solid #e2e8f0',
+          background: '#ffffff',
           flexShrink: 0,
         }}
       >
         <MiniGameStrip shapeId={shapeId} dimensions={dimensions} />
 
-        {/* Previous / Next Navigation */}
+        {/* Navigation row */}
         <div
           style={{
             display: 'flex',
             justifyContent: 'space-between',
             marginTop: '0.4rem',
             gap: '0.5rem',
+            alignItems: 'center',
           }}
         >
           <button
@@ -261,8 +264,8 @@ export default function ShapeDetailPage({ shapeId }) {
             ← {prev ? shapeConfig[prev]?.name : 'Prev'}
           </button>
 
-          <div style={{ fontSize: '0.74rem', color: 'var(--color-text-muted)', display: 'flex', alignItems: 'center' }}>
-            Level {levelInfo.level} · {levelInfo.title}
+          <div style={{ fontSize: '0.76rem', color: '#64748b', fontWeight: 600 }}>
+            {levelInfo.title}
           </div>
 
           <button

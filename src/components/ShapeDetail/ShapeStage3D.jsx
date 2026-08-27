@@ -1,9 +1,9 @@
 /**
  * ShapeStage3D.jsx
  * ═══════════════════════════════════════════════════════════════
- * Renders Three.js geometry for any shape, dynamic materials/skins
- * (Neon, Candy, Hologram, Gold, Crystal), dimension handles,
- * measurement lines, and orbit controls.
+ * Renders Three.js geometry for any shape in a bright studio stage,
+ * dynamic toy materials/skins, dimension handles, measurement lines,
+ * and orbit controls.
  * ═══════════════════════════════════════════════════════════════
  */
 import React, { useRef, useMemo, useState } from 'react';
@@ -31,19 +31,19 @@ function ShapeGeometry({ shapeId, dims, seeInside, activeSkinId }) {
     }
   });
 
-  const opacity = seeInside ? 0.35 : skin.materialProps?.opacity ?? 0.92;
+  const opacity = seeInside ? 0.35 : skin.materialProps?.opacity ?? 0.95;
   const transparent = seeInside || (skin.materialProps?.transparent ?? false);
 
   const baseColor = skin.materialProps?.colorOverride || config.accentColor;
 
   const materialProps = {
     color: baseColor,
-    roughness: skin.materialProps?.roughness ?? 0.35,
+    roughness: skin.materialProps?.roughness ?? 0.3,
     metalness: skin.materialProps?.metalness ?? 0.05,
     wireframe: skin.materialProps?.wireframe ?? false,
     emissive: skin.materialProps?.emissive || (skin.materialProps?.emissiveIntensity ? baseColor : '#000000'),
     emissiveIntensity: skin.materialProps?.emissiveIntensity ?? 0,
-    clearcoat: skin.materialProps?.clearcoat ?? 0,
+    clearcoat: skin.materialProps?.clearcoat ?? 0.2,
     transmission: skin.materialProps?.transmission ?? 0,
     transparent,
     opacity,
@@ -203,7 +203,7 @@ function UnitCubeGrid({ dims, config }) {
           <meshBasicMaterial
             color={config.accentColor}
             wireframe
-            opacity={0.3}
+            opacity={0.4}
             transparent
           />
         </mesh>
@@ -234,19 +234,19 @@ function MeasurementLines({ shapeId, dims }) {
           if (Math.abs(dim.valueFromAxisPos(1) - 1) < 0.01) {
             start = [0, y + offset, z];
           }
-          labelPos = [(start[0] + end[0]) / 2, y + offset + 0.3, z];
+          labelPos = [(start[0] + end[0]) / 2, y + offset + 0.35, z];
         } else if (dim.axis === 'y') {
           const x = handlePos[0];
           const z = handlePos[2];
           start = [x + offset, -handlePos[1], z];
           end = [x + offset, handlePos[1], z];
-          labelPos = [x + offset + 0.3, 0, z];
+          labelPos = [x + offset + 0.35, 0, z];
         } else {
           const x = handlePos[0];
           const y = handlePos[1];
           start = [x, y + offset, -handlePos[2]];
           end = [x, y + offset, handlePos[2]];
-          labelPos = [x, y + offset + 0.3, 0];
+          labelPos = [x, y + offset + 0.35, 0];
         }
 
         return (
@@ -254,7 +254,7 @@ function MeasurementLines({ shapeId, dims }) {
             <Line
               points={[start, end]}
               color={dim.color}
-              lineWidth={1.5}
+              lineWidth={2}
               dashed
               dashSize={0.15}
               gapSize={0.1}
@@ -264,13 +264,15 @@ function MeasurementLines({ shapeId, dims }) {
                 style={{
                   pointerEvents: 'none',
                   fontFamily: "'Space Grotesk', sans-serif",
-                  fontSize: '10px',
-                  fontWeight: 600,
+                  fontSize: '11px',
+                  fontWeight: 800,
                   color: dim.color,
-                  background: 'rgba(15, 13, 26, 0.8)',
-                  padding: '1px 6px',
-                  borderRadius: '4px',
+                  background: '#ffffff',
+                  border: `2px solid ${dim.color}`,
+                  padding: '2px 8px',
+                  borderRadius: '9999px',
                   whiteSpace: 'nowrap',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
                   userSelect: 'none',
                 }}
               >
@@ -284,9 +286,9 @@ function MeasurementLines({ shapeId, dims }) {
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 // MAIN COMPONENT
-// ═══════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
 export default function ShapeStage3D({ shapeId, dimensions, onDimensionChange }) {
   const config = shapeConfig[shapeId];
   const controlsRef = useRef();
@@ -298,13 +300,13 @@ export default function ShapeStage3D({ shapeId, dimensions, onDimensionChange })
 
   return (
     <>
-      {/* Lighting */}
-      <ambientLight intensity={0.5} />
-      <directionalLight position={[5, 8, 5]} intensity={0.8} castShadow />
-      <directionalLight position={[-3, 4, -2]} intensity={0.3} />
-      <Environment preset="studio" environmentIntensity={0.3} />
+      {/* Bright Studio Lighting */}
+      <ambientLight intensity={0.7} />
+      <directionalLight position={[5, 8, 5]} intensity={0.9} castShadow />
+      <directionalLight position={[-3, 4, -2]} intensity={0.4} />
+      <Environment preset="city" environmentIntensity={0.4} />
 
-      {/* The shape with customized active skin */}
+      {/* The Shape with Active Skin */}
       <ShapeGeometry
         shapeId={shapeId}
         dims={dimensions}

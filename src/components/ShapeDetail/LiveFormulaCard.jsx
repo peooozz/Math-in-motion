@@ -1,15 +1,9 @@
 /**
  * LiveFormulaCard.jsx
  * ═══════════════════════════════════════════════════════════════
- * THE EMOTIONAL CORE of Math in Motion.
- *
- * Shows the formula with live number substitution, updating
- * instantly as the student drags dimension handles.
- *
- * Three difficulty tiers:
- *  - Explorer (Grade 3–5): Friendly text, no algebra
- *  - Builder (Grade 6–8):  Formula + substitution + result
- *  - Mathematician (9–10): Formula + substitution + derivation
+ * Visual Formula Discovery Card (Child-Friendly & Light).
+ * Replaces dense text with large, interactive, color-coded
+ * formula chips that highlight and multiply live as kids drag handles!
  * ═══════════════════════════════════════════════════════════════
  */
 import React, { useRef, useEffect, useState } from 'react';
@@ -22,130 +16,157 @@ export default function LiveFormulaCard({ shapeId, dimensions }) {
   const config = shapeConfig[shapeId];
   const difficulty = useAppStore((s) => s.difficulty);
   const prevResultsRef = useRef({});
-  const [flashKeys, setFlashKeys] = useState({});
+  const [flash, setFlash] = useState(false);
 
   if (!config) return null;
 
   const results = computeAllFormulas(shapeId, dimensions);
+  const primaryKey = config.is2D ? 'area' : 'volume';
+  const primaryFormula = config.formulas[primaryKey];
+  const primaryResult = results[primaryKey] || 0;
 
-  // Flash animation when values change
   useEffect(() => {
-    const newFlash = {};
-    Object.keys(results).forEach((key) => {
-      const prev = prevResultsRef.current[key];
-      if (prev !== undefined && Math.abs(prev - results[key]) > 0.01) {
-        newFlash[key] = true;
-      }
-    });
-    prevResultsRef.current = { ...results };
-
-    if (Object.keys(newFlash).length > 0) {
-      setFlashKeys(newFlash);
-      const timer = setTimeout(() => setFlashKeys({}), 300);
-      return () => clearTimeout(timer);
+    const prev = prevResultsRef.current[primaryKey];
+    if (prev !== undefined && Math.abs(prev - primaryResult) > 0.05) {
+      setFlash(true);
+      const t = setTimeout(() => setFlash(false), 250);
+      return () => clearTimeout(t);
     }
-  }, [results]);
+    prevResultsRef.current = { ...results };
+  }, [primaryResult, primaryKey, results]);
 
   return (
     <div
       className="glass"
-      style={{ padding: '0.85rem 1rem' }}
+      style={{ padding: '1rem 1.25rem' }}
       role="status"
       aria-live="polite"
-      aria-atomic="true"
     >
-      {Object.entries(config.formulas).map(([key, formula]) => {
-        const result = results[key];
-        const isFlashing = flashKeys[key];
+      {/* Header Badge */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: '0.6rem',
+      }}>
+        <span style={{
+          fontSize: '0.78rem',
+          fontWeight: 800,
+          fontFamily: "'Space Grotesk', sans-serif",
+          textTransform: 'uppercase',
+          letterSpacing: '0.06em',
+          color: '#64748b',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.3rem',
+        }}>
+          {config.is2D ? '📐 2D AREA' : '📦 3D VOLUME'}
+        </span>
+        <span style={{
+          fontSize: '0.72rem',
+          fontWeight: 700,
+          color: '#4f46e5',
+          background: '#e0e7ff',
+          padding: '0.2rem 0.5rem',
+          borderRadius: '9999px',
+        }}>
+          Live Multiplier
+        </span>
+      </div>
 
-        return (
-          <div key={key} style={{ marginBottom: '0.75rem' }}>
-            {/* Label */}
-            <div className="hud-label" style={{ marginBottom: '0.35rem' }}>
-              {formula.label === 'Volume' ? '📦' : formula.label === 'Area' ? '📐' : '🔲'}{' '}
-              {formula.label}
-            </div>
-
-            {/* ─── EXPLORER MODE ──────────────────────────── */}
-            {difficulty === 'elementary' && (
-              <div
-                style={{
-                  fontSize: '1.2rem',
-                  fontWeight: 700,
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  color: config.accentColor,
-                  lineHeight: 1.4,
-                }}
-              >
-                {formula.explorer(result)}
-              </div>
-            )}
-
-            {/* ─── BUILDER MODE ───────────────────────────── */}
-            {difficulty === 'standard' && (
-              <div className="formula-card">
-                {/* Worded formula */}
-                <div style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', marginBottom: '0.15rem' }}>
-                  {formula.worded}
-                </div>
-                {/* Substituted formula */}
-                <div style={{ fontSize: '1.2rem' }}>
-                  {formula.label} = {formula.substitute(dimensions)}
-                </div>
-                {/* Result */}
+      {/* ─── EXPLORER MODE (Grade 3–5: Counting cubes / Friendly) ─── */}
+      {difficulty === 'elementary' ? (
+        <div>
+          <div style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontWeight: 800,
+            fontSize: '1.25rem',
+            color: '#0f172a',
+            lineHeight: 1.3,
+            marginBottom: '0.4rem',
+          }}>
+            Holds <span style={{ color: config.accentColor, fontSize: '1.45rem' }}>{Math.round(primaryResult)}</span> toy blocks! 🧱
+          </div>
+          <div style={{ fontSize: '0.78rem', color: '#64748b' }}>
+            {primaryFormula?.worded}
+          </div>
+        </div>
+      ) : (
+        /* ─── BUILDER & MATHEMATICIAN (Visual Interactive Formula Chips) ─── */
+        <div>
+          {/* Visual Formula Chips Row */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.4rem',
+            flexWrap: 'wrap',
+            marginBottom: '0.6rem',
+          }}>
+            {config.dimensions.map((dim, idx) => (
+              <React.Fragment key={dim.key}>
+                {idx > 0 && <span style={{ fontSize: '1.1rem', fontWeight: 800, color: '#94a3b8' }}>×</span>}
                 <div
+                  className="formula-chip"
                   style={{
-                    fontSize: '1.6rem',
-                    fontWeight: 700,
-                    fontFamily: "'Space Grotesk', sans-serif",
-                    color: config.accentColor,
-                    transition: 'transform 0.15s ease',
-                    transform: isFlashing ? 'scale(1.08)' : 'scale(1)',
+                    background: `${dim.color}15`,
+                    border: `2px solid ${dim.color}40`,
+                    color: dim.color,
                   }}
                 >
-                  = {round(result, 1)} {formula.unit}
+                  <span style={{ fontSize: '0.75rem', opacity: 0.8 }}>{dim.label}:</span>
+                  <span>{round(dimensions[dim.key])}</span>
                 </div>
-              </div>
-            )}
+              </React.Fragment>
+            ))}
 
-            {/* ─── MATHEMATICIAN MODE ────────────────────── */}
-            {difficulty === 'advanced' && (
-              <div>
-                {/* Symbolic formula */}
-                <div className="formula-symbolic" style={{ marginBottom: '0.2rem' }}>
-                  {formula.symbolic}
-                </div>
-                {/* Substituted */}
-                <div className="formula-card" style={{ marginBottom: '0.15rem' }}>
-                  {formula.label} = {formula.substitute(dimensions)}
-                </div>
-                {/* Result */}
-                <div
-                  style={{
-                    fontSize: '1.5rem',
-                    fontWeight: 700,
-                    fontFamily: "'Space Grotesk', sans-serif",
-                    color: config.accentColor,
-                    transition: 'transform 0.15s ease',
-                    transform: isFlashing ? 'scale(1.08)' : 'scale(1)',
-                  }}
-                >
-                  = {round(result, 2)} {formula.unit}
-                </div>
-              </div>
+            {config.id === 'cone' && (
+              <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#f59e0b', background: '#fef3c7', padding: '0.25rem 0.5rem', borderRadius: '8px' }}>
+                × ⅓
+              </span>
+            )}
+            {config.id === 'pyramid' && (
+              <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#ea580c', background: '#ffedd5', padding: '0.25rem 0.5rem', borderRadius: '8px' }}>
+                × ⅓
+              </span>
+            )}
+            {config.id === 'triangle' && (
+              <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#0d9488', background: '#ccfbf1', padding: '0.25rem 0.5rem', borderRadius: '8px' }}>
+                × ½
+              </span>
             )}
           </div>
-        );
-      })}
 
-      {/* Aria-hidden summary for screen readers */}
-      <div className="sr-only" aria-live="polite">
-        {Object.entries(config.formulas).map(([key, formula]) => (
-          <span key={key}>
-            {formula.label}: {round(results[key], 2)} {formula.unit}.{' '}
-          </span>
-        ))}
-      </div>
+          {/* Big Result Display */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'baseline',
+            gap: '0.4rem',
+            marginTop: '0.2rem',
+          }}>
+            <span style={{ fontSize: '1.4rem', fontWeight: 800, color: '#64748b' }}>=</span>
+            <span
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 900,
+                fontSize: '2rem',
+                color: config.accentColor,
+                transform: flash ? 'scale(1.08)' : 'scale(1)',
+                transition: 'transform 0.15s ease',
+              }}
+            >
+              {round(primaryResult, 1)}
+            </span>
+            <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#64748b' }}>
+              {primaryFormula?.unit}
+            </span>
+          </div>
+
+          {/* Worded formula subtitle */}
+          <div style={{ fontSize: '0.76rem', color: '#64748b', marginTop: '0.3rem' }}>
+            {primaryFormula?.worded}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

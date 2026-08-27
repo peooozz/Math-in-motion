@@ -1,14 +1,14 @@
 /**
  * DifficultyToggle.jsx
- * Explorer 🧒 / Builder 🧑 / Mathematician 🎓 segmented control.
+ * Explorer 🧒 / Builder 🧑 / Master 🎓 pill switcher.
  */
 import React from 'react';
 import useAppStore from '../../store/useAppStore';
 
 const LEVELS = [
-  { key: 'elementary', label: 'Explorer 🧒' },
-  { key: 'standard', label: 'Builder 🧑' },
-  { key: 'advanced', label: 'Mathematician 🎓' },
+  { key: 'elementary', label: '🧒 Explorer' },
+  { key: 'standard', label: '🧑 Builder' },
+  { key: 'advanced', label: '🎓 Master' },
 ];
 
 export default function DifficultyToggle({ compact = false }) {
@@ -24,7 +24,7 @@ export default function DifficultyToggle({ compact = false }) {
           onClick={() => setDifficulty(l.key)}
           role="radio"
           aria-checked={difficulty === l.key}
-          style={compact ? { padding: '0.3rem 0.55rem', fontSize: '0.7rem' } : undefined}
+          style={compact ? { padding: '0.25rem 0.6rem', fontSize: '0.72rem' } : undefined}
         >
           {l.label}
         </button>

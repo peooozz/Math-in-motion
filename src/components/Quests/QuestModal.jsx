@@ -1,9 +1,7 @@
 /**
  * QuestModal.jsx
  * ═══════════════════════════════════════════════════════════════
- * In-stage Quest HUD banner & Victory Celebration popup.
- * Automatically verifies quest success criteria, evaluates stars,
- * triggers audio fanfares, and awards XP & Gems.
+ * Sunny & Cheerful In-Stage Quest HUD & Victory Screen for Kids.
  * ═══════════════════════════════════════════════════════════════
  */
 import React, { useState, useEffect } from 'react';
@@ -19,7 +17,6 @@ export default function QuestModal({ questId, dimensions }) {
   const completeQuest = useAppStore((s) => s.completeQuest);
   const setCurrentShape = useAppStore((s) => s.setCurrentShape);
   const setViewMode = useAppStore((s) => s.setViewMode);
-  const isAlreadyCompleted = useAppStore((s) => !!s.player.questProgress[questId]?.completed);
 
   const [cleared, setCleared] = useState(false);
   const [showVictory, setShowVictory] = useState(false);
@@ -33,7 +30,6 @@ export default function QuestModal({ questId, dimensions }) {
   const currentValue = formula ? round(formula.compute(dimensions), 1) : 0;
   const isTargetHit = Math.abs(currentValue - quest.targetValue) <= quest.tolerance;
 
-  // ─── Verify Quest Completion ───────────────────────────────
   useEffect(() => {
     if (isTargetHit && !cleared) {
       setCleared(true);
@@ -57,7 +53,7 @@ export default function QuestModal({ questId, dimensions }) {
 
   return (
     <>
-      {/* Top Floating Mission Banner */}
+      {/* Top Floating Mission Banner (Light & Crisp) */}
       <div style={{
         position: 'absolute',
         top: '0.75rem',
@@ -66,12 +62,11 @@ export default function QuestModal({ questId, dimensions }) {
         zIndex: 15,
         maxWidth: '92%',
         width: '460px',
-        padding: '0.6rem 0.9rem',
-        borderRadius: '14px',
-        background: 'rgba(15, 13, 26, 0.88)',
-        backdropFilter: 'blur(12px)',
-        border: '1px solid rgba(251, 191, 36, 0.3)',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+        padding: '0.65rem 1rem',
+        borderRadius: '18px',
+        background: '#ffffff',
+        border: '2.5px solid #fde68a',
+        boxShadow: '0 10px 25px rgba(245, 158, 11, 0.15)',
         animation: 'page-in 0.3s ease',
       }}>
         <div style={{
@@ -81,14 +76,14 @@ export default function QuestModal({ questId, dimensions }) {
           marginBottom: '0.25rem',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-            <span style={{ fontSize: '1.1rem' }}>🏆</span>
+            <span style={{ fontSize: '1.2rem' }}>🏆</span>
             <span style={{
               fontFamily: "'Space Grotesk', sans-serif",
-              fontWeight: 800,
-              fontSize: '0.85rem',
-              color: '#fbbf24',
+              fontWeight: 900,
+              fontSize: '0.9rem',
+              color: '#b45309',
             }}>
-              Quest #{quest.id}: {quest.title}
+              Mission #{quest.id}: {quest.title}
             </span>
           </div>
 
@@ -99,44 +94,44 @@ export default function QuestModal({ questId, dimensions }) {
               setShowHint(!showHint);
               if (!showHint) setHintIndex((i) => (i + 1) % quest.hints.length);
             }}
-            style={{ fontSize: '0.68rem', padding: '0.2rem 0.5rem' }}
+            style={{ fontSize: '0.72rem', padding: '0.2rem 0.6rem', background: '#fef3c7', borderColor: '#fde68a', color: '#b45309' }}
           >
-            💡 Hint
+            💡 Clue
           </button>
         </div>
 
         <div style={{
-          fontSize: '0.78rem',
-          color: 'var(--color-text-secondary)',
-          lineHeight: 1.3,
+          fontSize: '0.8rem',
+          color: '#334155',
+          lineHeight: 1.35,
           marginBottom: '0.4rem',
         }}>
-          🎯 <strong>Objective:</strong> {quest.objective}
+          🎯 <strong>Goal:</strong> {quest.objective}
         </div>
 
         {/* Live Target Progress Bar */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <div style={{
             flex: 1,
-            height: '6px',
-            borderRadius: '3px',
-            background: 'rgba(255,255,255,0.08)',
+            height: '7px',
+            borderRadius: '4px',
+            background: '#e2e8f0',
             overflow: 'hidden',
           }}>
             <div style={{
               height: '100%',
-              borderRadius: '3px',
+              borderRadius: '4px',
               width: `${Math.min(100, Math.max(5, (currentValue / quest.targetValue) * 100))}%`,
               background: isTargetHit
                 ? 'linear-gradient(90deg, #10b981, #34d399)'
-                : 'linear-gradient(90deg, #fbbf24, #f59e0b)',
+                : 'linear-gradient(90deg, #f59e0b, #fbbf24)',
               transition: 'width 0.1s ease',
             }} />
           </div>
           <span style={{
-            fontSize: '0.72rem',
-            fontWeight: 700,
-            color: isTargetHit ? '#10b981' : '#fbbf24',
+            fontSize: '0.76rem',
+            fontWeight: 800,
+            color: isTargetHit ? '#059669' : '#b45309',
             fontFamily: "'Space Grotesk', sans-serif",
           }}>
             {currentValue} / {quest.targetValue}
@@ -147,12 +142,13 @@ export default function QuestModal({ questId, dimensions }) {
         {showHint && (
           <div style={{
             marginTop: '0.5rem',
-            padding: '0.4rem 0.6rem',
-            borderRadius: '8px',
-            background: 'rgba(251, 191, 36, 0.1)',
-            border: '1px solid rgba(251, 191, 36, 0.2)',
-            fontSize: '0.74rem',
-            color: '#fef08a',
+            padding: '0.45rem 0.7rem',
+            borderRadius: '10px',
+            background: '#fef3c7',
+            border: '1.5px solid #fde68a',
+            fontSize: '0.76rem',
+            color: '#92400e',
+            fontWeight: 600,
             animation: 'page-in 0.2s ease',
           }}>
             🤖 <strong>Geo's Clue:</strong> {quest.hints[hintIndex % quest.hints.length]}
@@ -160,13 +156,13 @@ export default function QuestModal({ questId, dimensions }) {
         )}
       </div>
 
-      {/* Fullscreen Victory Celebration Popup */}
+      {/* Fullscreen Victory Celebration */}
       {showVictory && (
         <div style={{
           position: 'fixed',
           inset: 0,
           zIndex: 50,
-          background: 'rgba(15, 13, 26, 0.85)',
+          background: 'rgba(15, 23, 42, 0.45)',
           backdropFilter: 'blur(8px)',
           display: 'flex',
           alignItems: 'center',
@@ -179,66 +175,67 @@ export default function QuestModal({ questId, dimensions }) {
             width: '100%',
             padding: '1.75rem',
             borderRadius: '24px',
-            background: 'linear-gradient(135deg, rgba(30, 27, 50, 0.95), rgba(15, 13, 26, 0.98))',
-            border: '2px solid rgba(251, 191, 36, 0.4)',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(251, 191, 36, 0.2)',
+            background: '#ffffff',
+            border: '3px solid #86efac',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
             textAlign: 'center',
-            animation: 'badge-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+            animation: 'badge-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
           }}>
             {/* Stars */}
-            <div style={{ fontSize: '2.5rem', marginBottom: '0.4rem', letterSpacing: '0.2rem' }}>
+            <div style={{ fontSize: '2.8rem', marginBottom: '0.4rem', letterSpacing: '0.3rem' }}>
               ⭐ ⭐ ⭐
             </div>
 
             <h2 style={{
               fontFamily: "'Space Grotesk', sans-serif",
-              fontWeight: 800,
-              fontSize: '1.6rem',
+              fontWeight: 900,
+              fontSize: '1.7rem',
               margin: '0 0 0.4rem',
-              color: '#fbbf24',
+              color: '#15803d',
             }}>
               QUEST CLEARED!
             </h2>
 
             <p style={{
-              fontSize: '0.88rem',
-              color: 'var(--color-text-secondary)',
-              margin: '0 0 1rem',
+              fontSize: '0.9rem',
+              color: '#475569',
+              margin: '0 0 1.25rem',
               lineHeight: 1.4,
+              fontWeight: 600,
             }}>
               {quest.geoVictory}
             </p>
 
-            {/* Rewards Banner */}
+            {/* Rewards Card */}
             <div style={{
               display: 'flex',
               justifyContent: 'center',
               gap: '1.5rem',
-              padding: '0.8rem',
-              borderRadius: '12px',
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              marginBottom: '1.25rem',
+              padding: '0.9rem',
+              borderRadius: '16px',
+              background: '#f0fdf4',
+              border: '2px solid #bbf7d0',
+              marginBottom: '1.4rem',
             }}>
               <div>
-                <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', fontWeight: 600 }}>
-                  XP EARNED
+                <div style={{ fontSize: '0.72rem', color: '#166534', fontWeight: 700 }}>
+                  XP REWARD
                 </div>
-                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.3rem', color: '#818cf8' }}>
+                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 900, fontSize: '1.4rem', color: '#4f46e5' }}>
                   +{quest.xpReward} XP
                 </div>
               </div>
               <div>
-                <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', fontWeight: 600 }}>
+                <div style={{ fontSize: '0.72rem', color: '#166534', fontWeight: 700 }}>
                   GEMS EARNED
                 </div>
-                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '1.3rem', color: '#34d399' }}>
+                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 900, fontSize: '1.4rem', color: '#059669' }}>
                   +{quest.gemReward} 💎
                 </div>
               </div>
             </div>
 
-            {/* Navigation buttons */}
+            {/* Navigation Buttons */}
             <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'center' }}>
               <button
                 className="btn"
@@ -252,6 +249,7 @@ export default function QuestModal({ questId, dimensions }) {
               <button
                 className="btn btn-accent"
                 onClick={handleNextQuest}
+                style={{ fontWeight: 800 }}
               >
                 Next Quest →
               </button>

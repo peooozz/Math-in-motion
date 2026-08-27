@@ -1,7 +1,9 @@
 /**
  * LiveDimensionsCard.jsx
- * Shows the current dimension values in a clean, bold card.
- * Auto-generates rows from the shape config's dimensions array.
+ * ═══════════════════════════════════════════════════════════════
+ * Clean, bright, child-friendly dimensions card.
+ * Shows color-coded dimension badges with big readable numbers.
+ * ═══════════════════════════════════════════════════════════════
  */
 import React from 'react';
 import { shapeConfig, computeDerived } from '../../data/shapeConfig';
@@ -15,55 +17,96 @@ export default function LiveDimensionsCard({ shapeId, dimensions }) {
   const derived = computeDerived(shapeId, dimensions);
 
   return (
-    <div className="glass" style={{ padding: '0.85rem 1rem' }}>
-      <div className="hud-label" style={{ marginBottom: '0.6rem' }}>
-        📐 Dimensions
+    <div className="glass" style={{ padding: '0.9rem 1.1rem' }}>
+      <div style={{
+        fontSize: '0.78rem',
+        fontWeight: 800,
+        fontFamily: "'Space Grotesk', sans-serif",
+        textTransform: 'uppercase',
+        letterSpacing: '0.06em',
+        color: '#64748b',
+        marginBottom: '0.6rem',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.3rem',
+      }}>
+        <span>📐 Dimensions</span>
       </div>
 
-      {/* Draggable dimensions */}
-      {config.dimensions.map((dim) => (
-        <div
-          key={dim.key}
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'baseline',
-            marginBottom: '0.4rem',
-          }}
-        >
-          <span style={{ color: dim.color, fontWeight: 600, fontSize: '0.85rem' }}>
-            {dim.label} ({dim.symbol})
-          </span>
-          <span
-            className="hud-value"
-            style={{ fontSize: '1.3rem', color: dim.color }}
-            aria-label={`${dim.label}: ${round(dimensions[dim.key])} centimeters`}
+      {/* Grid of Dimension Chips */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))',
+        gap: '0.5rem',
+      }}>
+        {config.dimensions.map((dim) => (
+          <div
+            key={dim.key}
+            style={{
+              padding: '0.6rem 0.75rem',
+              borderRadius: '14px',
+              background: `${dim.color}10`,
+              border: `2px solid ${dim.color}30`,
+              textAlign: 'center',
+            }}
           >
-            {round(dimensions[dim.key])} <span style={{ fontSize: '0.7em', opacity: 0.6 }}>cm</span>
-          </span>
-        </div>
-      ))}
+            <div style={{
+              fontSize: '0.74rem',
+              fontWeight: 700,
+              color: dim.color,
+              marginBottom: '0.1rem',
+            }}>
+              {dim.label} ({dim.symbol})
+            </div>
+            <div
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 900,
+                fontSize: '1.4rem',
+                color: dim.color,
+                lineHeight: 1.1,
+              }}
+            >
+              {round(dimensions[dim.key])}
+              <span style={{ fontSize: '0.65em', fontWeight: 600, opacity: 0.7, marginLeft: '2px' }}>
+                cm
+              </span>
+            </div>
+          </div>
+        ))}
 
-      {/* Derived dimensions (non-draggable) */}
-      {Object.entries(config.derived || {}).map(([key, d]) => (
-        <div
-          key={key}
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'baseline',
-            marginBottom: '0.4rem',
-            opacity: 0.75,
-          }}
-        >
-          <span style={{ fontWeight: 500, fontSize: '0.82rem', color: d.color || 'var(--color-text-secondary)' }}>
-            {d.label} ({d.symbol})
-          </span>
-          <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: '1rem' }}>
-            {round(derived[key])} <span style={{ fontSize: '0.7em', opacity: 0.6 }}>cm</span>
-          </span>
-        </div>
-      ))}
+        {/* Derived values if any */}
+        {Object.entries(config.derived || {}).map(([key, d]) => (
+          <div
+            key={key}
+            style={{
+              padding: '0.6rem 0.75rem',
+              borderRadius: '14px',
+              background: '#f1f5f9',
+              border: '2px solid #e2e8f0',
+              textAlign: 'center',
+            }}
+          >
+            <div style={{ fontSize: '0.74rem', fontWeight: 700, color: '#64748b', marginBottom: '0.1rem' }}>
+              {d.label} ({d.symbol})
+            </div>
+            <div
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontWeight: 800,
+                fontSize: '1.25rem',
+                color: '#334155',
+                lineHeight: 1.1,
+              }}
+            >
+              {round(derived[key])}
+              <span style={{ fontSize: '0.65em', fontWeight: 600, opacity: 0.7, marginLeft: '2px' }}>
+                cm
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

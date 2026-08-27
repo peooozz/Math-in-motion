@@ -1,12 +1,10 @@
 /**
  * MatchVolumeGame.jsx
  * ═══════════════════════════════════════════════════════════════
- * "Match the Volume" Arcade Game.
- * Features: Target volume, live difference gauge, combo streaks,
- * timed rush option, sound synthesis, confetti, XP & Gem rewards.
+ * "Match the Volume" Arcade Game (Light Theme & Child-Friendly).
  * ═══════════════════════════════════════════════════════════════
  */
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { shapeConfig } from '../../../data/shapeConfig';
 import useAppStore from '../../../store/useAppStore';
 import sound from '../../../utils/soundEffects';
@@ -50,11 +48,10 @@ export default function MatchVolumeGame({ shapeId, dimensions, formulaKey = 'vol
   if (!formula) return null;
 
   const currentValue = round(formula.compute(dimensions), 1);
-  const tolerance = Math.max(0.6, target * 0.05); // 5% tolerance or 0.6
+  const tolerance = Math.max(0.6, target * 0.05);
   const isClose = Math.abs(currentValue - target) <= tolerance;
   const diff = round(currentValue - target, 1);
 
-  // ─── Timer countdown ───────────────────────────────────────
   useEffect(() => {
     if (!timedMode || matched || timeLeft <= 0) return;
     const timer = setInterval(() => {
@@ -69,7 +66,6 @@ export default function MatchVolumeGame({ shapeId, dimensions, formulaKey = 'vol
     return () => clearInterval(timer);
   }, [timedMode, matched, timeLeft]);
 
-  // ─── Match Detection ───────────────────────────────────────
   useEffect(() => {
     if (isClose && !matched) {
       setMatched(true);
@@ -105,7 +101,7 @@ export default function MatchVolumeGame({ shapeId, dimensions, formulaKey = 'vol
 
   return (
     <div style={{ position: 'relative' }}>
-      {/* Confetti & Streak Celebration Banner */}
+      {/* Celebration Banner */}
       {showConfetti && (
         <div style={{
           position: 'absolute',
@@ -115,25 +111,26 @@ export default function MatchVolumeGame({ shapeId, dimensions, formulaKey = 'vol
           alignItems: 'center',
           justifyContent: 'center',
           zIndex: 20,
-          background: 'rgba(15, 13, 26, 0.75)',
-          borderRadius: '12px',
+          background: 'rgba(255, 255, 255, 0.95)',
+          borderRadius: '16px',
+          border: '2px solid #86efac',
           backdropFilter: 'blur(4px)',
           animation: 'badge-pop 0.4s ease forwards',
         }}>
           <div style={{ fontSize: '2.5rem', marginBottom: '0.2rem' }}>🎉 ⭐ 🎉</div>
           <div style={{
             fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 800,
-            fontSize: '1.2rem',
-            color: '#10b981',
+            fontWeight: 900,
+            fontSize: '1.3rem',
+            color: '#15803d',
           }}>
             MATCHED! +{30 + streak * 10} XP
           </div>
           {streak > 1 && (
             <div style={{
               fontSize: '0.85rem',
-              fontWeight: 700,
-              color: '#fbbf24',
+              fontWeight: 800,
+              color: '#d97706',
               marginTop: '0.2rem',
             }}>
               🔥 {streak}x STREAK BONUS! +{streak >= 3 ? 10 : 4} 💎
@@ -144,7 +141,7 @@ export default function MatchVolumeGame({ shapeId, dimensions, formulaKey = 'vol
             onClick={handleNewTarget}
             style={{ marginTop: '0.6rem' }}
           >
-            Next Challenge →
+            Next Target →
           </button>
         </div>
       )}
@@ -156,24 +153,21 @@ export default function MatchVolumeGame({ shapeId, dimensions, formulaKey = 'vol
         justifyContent: 'space-between',
         marginBottom: '0.6rem',
         paddingBottom: '0.4rem',
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        borderBottom: '1.5px solid #e2e8f0',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
           <span style={{
-            fontSize: '0.78rem',
-            fontWeight: 700,
-            color: streak > 0 ? '#fbbf24' : 'var(--color-text-muted)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.2rem',
+            fontSize: '0.82rem',
+            fontWeight: 800,
+            color: streak > 0 ? '#d97706' : '#64748b',
           }}>
             🔥 Streak: {streak}
           </span>
           {timedMode && (
             <span style={{
-              fontSize: '0.78rem',
-              fontWeight: 700,
-              color: timeLeft <= 5 ? '#ef4444' : '#06b6d4',
+              fontSize: '0.82rem',
+              fontWeight: 800,
+              color: timeLeft <= 5 ? '#ef4444' : '#0284c7',
             }}>
               ⏳ {timeLeft}s
             </span>
@@ -187,9 +181,9 @@ export default function MatchVolumeGame({ shapeId, dimensions, formulaKey = 'vol
             setTimedMode(!timedMode);
             setTimeLeft(30);
           }}
-          style={{ fontSize: '0.68rem', padding: '0.2rem 0.5rem' }}
+          style={{ fontSize: '0.72rem', padding: '0.2rem 0.6rem' }}
         >
-          {timedMode ? '⏱️ Timed Mode [ON]' : '⏱️ Try Timed'}
+          {timedMode ? '⏱️ Timed [ON]' : '⏱️ Timed Mode'}
         </button>
       </div>
 
@@ -204,86 +198,86 @@ export default function MatchVolumeGame({ shapeId, dimensions, formulaKey = 'vol
         {/* Target */}
         <div>
           <div style={{
-            fontSize: '0.7rem',
-            fontWeight: 600,
-            color: 'var(--color-text-muted)',
+            fontSize: '0.72rem',
+            fontWeight: 800,
+            color: '#64748b',
             textTransform: 'uppercase',
-            letterSpacing: '0.08em',
+            letterSpacing: '0.06em',
           }}>
             🎯 Target {label}
           </div>
           <div style={{
             fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 800,
-            fontSize: '1.4rem',
-            color: '#fbbf24',
+            fontWeight: 900,
+            fontSize: '1.5rem',
+            color: '#d97706',
           }}>
-            {target} {unit}
+            {target} <span style={{ fontSize: '0.7em', color: '#94a3b8' }}>{unit}</span>
           </div>
         </div>
 
         {/* Current value */}
         <div style={{ textAlign: 'center' }}>
           <div style={{
-            fontSize: '0.7rem',
-            fontWeight: 600,
-            color: 'var(--color-text-muted)',
+            fontSize: '0.72rem',
+            fontWeight: 800,
+            color: '#64748b',
             textTransform: 'uppercase',
-            letterSpacing: '0.08em',
+            letterSpacing: '0.06em',
           }}>
             Your {label}
           </div>
           <div style={{
             fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 800,
-            fontSize: '1.4rem',
-            color: matched ? '#10b981' : config.accentColor,
+            fontWeight: 900,
+            fontSize: '1.5rem',
+            color: matched ? '#059669' : config.accentColor,
             transition: 'color 0.2s ease',
           }}>
-            {currentValue} {unit}
+            {currentValue} <span style={{ fontSize: '0.7em', color: '#94a3b8' }}>{unit}</span>
           </div>
         </div>
 
-        {/* Status indicator & new target button */}
+        {/* Status */}
         <div style={{ textAlign: 'right' }}>
           {matched ? (
-            <div style={{ color: '#10b981', fontWeight: 700, fontSize: '0.85rem' }}>
-              ✅ Perfect Match!
+            <div style={{ color: '#059669', fontWeight: 800, fontSize: '0.9rem' }}>
+              ✅ Matched!
             </div>
           ) : (
             <div style={{
-              color: diff > 0 ? '#f97316' : '#3b82f6',
-              fontWeight: 600,
-              fontSize: '0.78rem',
+              color: diff > 0 ? '#ea580c' : '#0284c7',
+              fontWeight: 700,
+              fontSize: '0.8rem',
             }}>
-              {diff > 0 ? `${diff} too high ↓` : `${Math.abs(diff)} too low ↑`}
+              {diff > 0 ? `${diff} too big ↓` : `${Math.abs(diff)} too small ↑`}
             </div>
           )}
           <button
             className="btn btn-sm"
             onClick={handleNewTarget}
-            style={{ marginTop: '0.3rem', fontSize: '0.72rem' }}
+            style={{ marginTop: '0.3rem', fontSize: '0.74rem' }}
           >
             🎲 New Target
           </button>
         </div>
       </div>
 
-      {/* Live target proximity gauge */}
+      {/* Target Progress Bar */}
       <div style={{
         marginTop: '0.6rem',
-        height: '6px',
-        borderRadius: '3px',
-        background: 'rgba(255,255,255,0.06)',
+        height: '7px',
+        borderRadius: '4px',
+        background: '#e2e8f0',
         overflow: 'hidden',
       }}>
         <div style={{
           height: '100%',
-          borderRadius: '3px',
+          borderRadius: '4px',
           width: `${Math.min(100, (currentValue / target) * 100)}%`,
           background: matched
             ? 'linear-gradient(90deg, #10b981, #34d399)'
-            : `linear-gradient(90deg, ${config.accentColor}, ${config.accentColor}88)`,
+            : `linear-gradient(90deg, ${config.accentColor}, #818cf8)`,
           transition: 'width 0.1s ease',
         }} />
       </div>

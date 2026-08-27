@@ -1,31 +1,34 @@
 /**
  * MiniGameStrip.jsx
  * ═══════════════════════════════════════════════════════════════
- * Bottom-of-detail-page game strip.
- * Integrates all 4 interactive educational mini-games:
- *  1. 🎯 Match Volume (Target Rush & Streak)
- *  2. 🤔 Guess Before Drag (Prediction Arena)
- *  3. 🧩 Net Folding Lab (3D Folding & Spatial Quiz)
- *  4. 🌍 Real World Sorter (Everyday Object Classification)
+ * Bottom-of-detail-page game strip (Light, sunny child-friendly).
+ * Houses 5 interactive labs & arcade games:
+ *  1. 🎯 Target Pop (Match target with stars)
+ *  2. 🫗 Magic Pour (Cone/Pyramid ⅓ Proof Lab)
+ *  3. ✂️ Laser Slicer (2D Cross-Sections)
+ *  4. 🧩 Origami Net (Fold 2D pattern into 3D)
+ *  5. 🤔 Prediction (Hypothesis testing)
  * ═══════════════════════════════════════════════════════════════
  */
 import React, { useState } from 'react';
 import MatchVolumeGame from './games/MatchVolumeGame';
 import GuessBeforeDragGame from './games/GuessBeforeDragGame';
 import NetMatchingGame from './games/NetMatchingGame';
-import RealWorldMatchGame from './games/RealWorldMatchGame';
+import MagicPourLab from './labs/MagicPourLab';
+import LaserSlicerLab from './labs/LaserSlicerLab';
 import { shapeConfig } from '../../data/shapeConfig';
 import sound from '../../utils/soundEffects';
 
 const GAME_TABS = [
-  { key: 'matchVolume', label: '🎯 Match Target', icon: '🎯' },
-  { key: 'guessBeforeDrag', label: '🤔 Prediction', icon: '🤔' },
-  { key: 'netMatching', label: '🧩 Net Lab', icon: '🧩' },
-  { key: 'realWorldMatch', label: '🌍 Real World', icon: '🌍' },
+  { key: 'targetPop', label: '🎯 Target Pop', icon: '🎯' },
+  { key: 'magicPour', label: '🫗 Magic Pour (⅓ Proof)', icon: '🫗' },
+  { key: 'laserSlice', label: '✂️ Laser Slicer', icon: '✂️' },
+  { key: 'origamiNet', label: '🧩 Origami Net', icon: '🧩' },
+  { key: 'prediction', label: '🤔 Prediction', icon: '🤔' },
 ];
 
 export default function MiniGameStrip({ shapeId, dimensions }) {
-  const [activeGame, setActiveGame] = useState('matchVolume');
+  const [activeTab, setActiveTab] = useState('targetPop');
   const [expanded, setExpanded] = useState(true);
   const config = shapeConfig[shapeId];
 
@@ -34,13 +37,13 @@ export default function MiniGameStrip({ shapeId, dimensions }) {
 
   const handleTabClick = (key) => {
     sound.playPop();
-    setActiveGame(key);
+    setActiveTab(key);
     setExpanded(true);
   };
 
   return (
     <div className="game-strip">
-      {/* Game tab header */}
+      {/* Header controls & tabs */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
@@ -49,48 +52,55 @@ export default function MiniGameStrip({ shapeId, dimensions }) {
         gap: '0.4rem',
         flexWrap: 'wrap',
       }}>
-        <div style={{ display: 'flex', gap: '0.3rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
           {GAME_TABS.map((tab) => (
             <button
               key={tab.key}
-              className={`btn btn-sm ${activeGame === tab.key && expanded ? 'btn-accent' : ''}`}
+              className={`btn btn-sm ${activeTab === tab.key && expanded ? 'btn-accent' : ''}`}
               onClick={() => handleTabClick(tab.key)}
-              style={{ fontSize: '0.74rem', padding: '0.3rem 0.6rem' }}
+              style={{
+                fontSize: '0.76rem',
+                padding: '0.3rem 0.75rem',
+              }}
             >
               {tab.label}
             </button>
           ))}
         </div>
+
         <button
           className="btn btn-sm"
           onClick={() => {
             sound.playPop();
             setExpanded(!expanded);
           }}
-          style={{ fontSize: '0.7rem', padding: '0.25rem 0.55rem' }}
+          style={{ fontSize: '0.72rem', padding: '0.25rem 0.6rem' }}
         >
-          {expanded ? '▼ Minimize' : '▲ Play Arcade'}
+          {expanded ? '▼ Minimize' : '▲ Open Lab'}
         </button>
       </div>
 
-      {/* Active game view */}
+      {/* Active Lab Content */}
       {expanded && (
         <div style={{ marginTop: '0.4rem' }}>
-          {activeGame === 'matchVolume' && formula && (
+          {activeTab === 'targetPop' && formula && (
             <MatchVolumeGame
               shapeId={shapeId}
               dimensions={dimensions}
               formulaKey={primaryKey}
             />
           )}
-          {activeGame === 'guessBeforeDrag' && (
-            <GuessBeforeDragGame shapeId={shapeId} dimensions={dimensions} />
+          {activeTab === 'magicPour' && (
+            <MagicPourLab shapeId={shapeId} />
           )}
-          {activeGame === 'netMatching' && (
+          {activeTab === 'laserSlice' && (
+            <LaserSlicerLab shapeId={shapeId} />
+          )}
+          {activeTab === 'origamiNet' && (
             <NetMatchingGame shapeId={shapeId} />
           )}
-          {activeGame === 'realWorldMatch' && (
-            <RealWorldMatchGame shapeId={shapeId} />
+          {activeTab === 'prediction' && (
+            <GuessBeforeDragGame shapeId={shapeId} dimensions={dimensions} />
           )}
         </div>
       )}

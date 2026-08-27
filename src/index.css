@@ -1,27 +1,29 @@
 @import "tailwindcss";
 
-/* ─── Design System Tokens ─────────────────────────────────────── */
+/* ─── Design System Tokens (Light, Sunny & Child-Friendly) ─────── */
 @theme {
-  --color-bg-dark: #0f0d1a;
-  --color-bg-card: rgba(255, 255, 255, 0.06);
-  --color-bg-glass: rgba(255, 255, 255, 0.08);
-  --color-border-glass: rgba(255, 255, 255, 0.12);
-  --color-text-primary: #f1f0f5;
-  --color-text-secondary: #a09cb5;
-  --color-text-muted: #6b6580;
+  --color-bg-light: #f8fafc;
+  --color-bg-card: #ffffff;
+  --color-bg-card-subtle: #f1f5f9;
+  --color-border-card: #e2e8f0;
+  
+  --color-text-main: #0f172a;
+  --color-text-sub: #475569;
+  --color-text-muted: #94a3b8;
 
-  /* Module accent palette */
+  /* Playful Palette */
   --color-accent-cube: #f43f5e;
-  --color-accent-cuboid: #3b82f6;
+  --color-accent-cuboid: #0284c7;
   --color-accent-cylinder: #8b5cf6;
   --color-accent-sphere: #10b981;
   --color-accent-cone: #f59e0b;
-  --color-accent-triangle: #14b8a6;
-  --color-accent-pyramid: #f97316;
+  --color-accent-triangle: #0d9488;
+  --color-accent-pyramid: #ea580c;
   --color-accent-prism: #06b6d4;
 
-  --color-accent-primary: #818cf8;
-  --color-accent-glow: rgba(129, 140, 248, 0.35);
+  --color-brand-primary: #4f46e5;
+  --color-brand-candy: #ec4899;
+  --color-brand-sun: #fbbf24;
 
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-display: 'Space Grotesk', 'Inter', sans-serif;
@@ -42,13 +44,13 @@ html, body, #root {
   height: 100%;
   overflow-x: hidden;
   font-family: var(--font-sans);
-  background: var(--color-bg-dark);
-  color: var(--color-text-primary);
+  background: var(--color-bg-light);
+  color: var(--color-text-main);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Prevent mobile browser from hijacking touch gestures on the 3D canvas */
+/* Prevent mobile browser from hijacking touch gestures on 3D canvas */
 canvas {
   touch-action: none;
 }
@@ -61,25 +63,23 @@ canvas {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
+  background: #cbd5e1;
+  border-radius: 4px;
 }
 
-/* ─── Glassmorphism Utility ────────────────────────────────────── */
+/* ─── Playful Toy Cards (Light Theme) ──────────────────────────── */
 .glass {
-  background: var(--color-bg-glass);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--color-border-glass);
-  border-radius: 16px;
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px -5px rgba(100, 116, 139, 0.08), 0 8px 10px -6px rgba(100, 116, 139, 0.04);
 }
 
 .glass-sm {
-  background: var(--color-bg-glass);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid var(--color-border-glass);
-  border-radius: 10px;
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(100, 116, 139, 0.06);
 }
 
 /* ─── Typography ───────────────────────────────────────────────── */
@@ -91,158 +91,126 @@ canvas {
   font-family: var(--font-handwriting);
 }
 
-/* ─── HUD / Readout Panel ──────────────────────────────────────── */
-.hud-value {
+/* ─── Visual Formula Chips ─────────────────────────────────────── */
+.formula-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 12px;
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.5rem;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  font-size: 1.05rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: transform 0.15s ease;
 }
 
-.hud-label {
-  font-size: 0.72rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color-text-secondary);
+.formula-chip:hover {
+  transform: translateY(-1px) scale(1.03);
 }
 
-/* ─── Formula Card ─────────────────────────────────────────────── */
-.formula-card {
-  font-family: var(--font-handwriting);
-  font-size: 1.35rem;
-  line-height: 1.8;
-  letter-spacing: 0.01em;
-  color: var(--color-text-primary);
-}
-
-.formula-symbolic {
-  font-family: var(--font-display);
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--color-accent-primary);
-}
-
-.formula-number-flash {
-  transition: color 0.15s ease, transform 0.15s ease;
-  display: inline-block;
-}
-
-.formula-number-flash.changed {
-  color: #fbbf24;
-  transform: scale(1.15);
-}
-
-/* ─── Button Base ──────────────────────────────────────────────── */
+/* ─── Playful Bubbly Buttons ───────────────────────────────────── */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  border-radius: 10px;
-  border: 1px solid var(--color-border-glass);
-  background: var(--color-bg-glass);
-  backdrop-filter: blur(8px);
-  color: var(--color-text-primary);
+  gap: 0.4rem;
+  padding: 0.55rem 1.2rem;
+  border-radius: 9999px;
+  border: 2px solid #e2e8f0;
+  background: #ffffff;
+  color: #0f172a;
   font-family: var(--font-sans);
-  font-size: 0.82rem;
-  font-weight: 600;
+  font-size: 0.84rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(100, 116, 139, 0.08);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   user-select: none;
   white-space: nowrap;
 }
 
 .btn:hover {
-  background: rgba(255, 255, 255, 0.14);
-  border-color: rgba(255, 255, 255, 0.2);
-  transform: translateY(-1px);
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(100, 116, 139, 0.12);
 }
 
 .btn:active {
   transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(100, 116, 139, 0.08);
 }
 
 .btn-accent {
-  background: var(--color-accent-primary);
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
   border-color: transparent;
-  color: #fff;
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
 }
 
 .btn-accent:hover {
-  background: #6366f1;
+  background: linear-gradient(135deg, #4f46e5, #4338ca);
   border-color: transparent;
+  color: #ffffff;
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
 }
 
 .btn-sm {
-  padding: 0.35rem 0.7rem;
-  font-size: 0.75rem;
-  border-radius: 8px;
+  padding: 0.35rem 0.8rem;
+  font-size: 0.78rem;
+  border-radius: 9999px;
 }
 
-/* ─── Difficulty Toggle ────────────────────────────────────────── */
+/* ─── Difficulty Segmented Control ─────────────────────────────── */
 .difficulty-toggle {
   display: flex;
-  gap: 2px;
-  padding: 3px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--color-border-glass);
+  gap: 3px;
+  padding: 4px;
+  border-radius: 9999px;
+  background: #e2e8f0;
+  border: 1px solid #cbd5e1;
 }
 
 .difficulty-toggle button {
-  padding: 0.4rem 0.75rem;
+  padding: 0.35rem 0.8rem;
   border: none;
-  border-radius: 9px;
+  border-radius: 9999px;
   background: transparent;
-  color: var(--color-text-muted);
+  color: #64748b;
   font-family: var(--font-sans);
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-size: 0.78rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: all 0.2s ease;
   white-space: nowrap;
 }
 
 .difficulty-toggle button.active {
-  background: var(--color-accent-primary);
-  color: #fff;
-  box-shadow: 0 2px 12px rgba(129, 140, 248, 0.3);
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .difficulty-toggle button:not(.active):hover {
-  color: var(--color-text-primary);
-  background: rgba(255, 255, 255, 0.06);
+  color: #0f172a;
 }
 
-/* ─── Challenge Prompt ─────────────────────────────────────────── */
-.challenge-card {
-  padding: 0.75rem 1rem;
-  border-radius: 12px;
-  background: rgba(251, 191, 36, 0.08);
-  border: 1px solid rgba(251, 191, 36, 0.2);
-  font-size: 0.82rem;
-  line-height: 1.5;
-}
-
-/* ─── Shape Card ───────────────────────────────────────────────── */
+/* ─── Shape Toy Card (Homepage) ────────────────────────────────── */
 .shape-card {
   position: relative;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  background: #ffffff;
+  border: 2.5px solid #e2e8f0;
   overflow: hidden;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 25px rgba(100, 116, 139, 0.08);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .shape-card:hover {
-  transform: translateY(-4px) scale(1.02);
-  border-color: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 20px 35px rgba(100, 116, 139, 0.15);
 }
 
 .shape-card .preview-canvas {
@@ -255,32 +223,27 @@ canvas {
   transition: stroke-dashoffset 0.5s ease;
 }
 
-/* ─── Badge Pop ────────────────────────────────────────────────── */
+/* ─── Badge Pop & Animations ───────────────────────────────────── */
 @keyframes badge-pop {
   0% { transform: scale(0.3); opacity: 0; }
-  50% { transform: scale(1.15); }
+  60% { transform: scale(1.12); }
   100% { transform: scale(1); opacity: 1; }
 }
 
 .badge-pop {
-  animation: badge-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation: badge-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
-/* ─── Confetti Burst ───────────────────────────────────────────── */
-@keyframes confetti-fall {
-  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-  100% { transform: translateY(100px) rotate(720deg); opacity: 0; }
-}
-
-/* ─── Mini-game strip ──────────────────────────────────── */
+/* ─── Mini-Game Strip (Light) ──────────────────────────────────── */
 .game-strip {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 16px;
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 20px;
   padding: 1rem 1.25rem;
+  box-shadow: 0 8px 24px rgba(100, 116, 139, 0.06);
 }
 
-/* ─── Layout: Detail page split ────────────────────────────────── */
+/* ─── Layout: Detail Page Split ────────────────────────────────── */
 .detail-split {
   display: flex;
   gap: 1rem;
@@ -292,9 +255,11 @@ canvas {
   flex: 3;
   position: relative;
   min-height: 300px;
-  border-radius: 16px;
+  border-radius: 20px;
   overflow: hidden;
-  background: rgba(0, 0, 0, 0.3);
+  background: radial-gradient(circle at 50% 30%, #ffffff 0%, #e2e8f0 100%);
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 10px 25px rgba(100, 116, 139, 0.08);
 }
 
 .detail-sidebar {
@@ -313,30 +278,20 @@ canvas {
   }
   .detail-stage {
     min-height: 250px;
-    max-height: 45vh;
+    max-height: 42vh;
   }
   .detail-sidebar {
     max-height: none;
     padding-right: 0;
   }
-  .hud-value {
-    font-size: 1.2rem;
-  }
-  .formula-card {
-    font-size: 1.1rem;
-  }
-  .difficulty-toggle button {
-    font-size: 0.68rem;
-    padding: 0.3rem 0.5rem;
-  }
 }
 
-/* ─── Page transitions ─────────────────────────────────────────── */
+/* ─── Page Transitions ─────────────────────────────────────────── */
 @keyframes page-in {
-  from { opacity: 0; transform: translateY(12px); }
+  from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 .page-enter {
-  animation: page-in 0.4s ease forwards;
+  animation: page-in 0.35s ease forwards;
 }
