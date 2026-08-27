@@ -3,10 +3,11 @@
  * ═══════════════════════════════════════════════════════════════
  * Ultra-simple, focused 3D Shape Playground.
  * Pure interaction: Spin shape, drag handles or sliders,
- * and watch the big colorful visual formula multiply in real time!
+ * 📦 Open & Reassemble Net Animation, and watch the big colorful
+ * visual formula multiply live!
  * ═══════════════════════════════════════════════════════════════
  */
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import useAppStore from '../store/useAppStore';
 import { shapeConfig, getDefaultDimensions, computeAllFormulas, getAdjacentShapes } from '../data/shapeConfig';
@@ -25,10 +26,67 @@ export default function ShapeDetailPage({ shapeId }) {
   const toggleSound = useAppStore((s) => s.toggleSound);
 
   const [dimensions, setDimensions] = useState(() => getDefaultDimensions(shapeId));
+  const [openFactor, setOpenFactor] = useState(0); // 0.0 = closed 3D solid, 1.0 = flat 2D net
+  const [isAutoAnimating, setIsAutoAnimating] = useState(false);
+  const animDirectionRef = useRef(1); // 1 = opening, -1 = closing
+  const animFrameRef = useRef(null);
 
   useMemo(() => {
     setDimensions(getDefaultDimensions(shapeId));
+    setOpenFactor(0);
+    setIsAutoAnimating(false);
   }, [shapeId]);
+
+  // ─── Auto Open & Reassembly Animation Loop ─────────────────
+  useEffect(() => {
+    if (!isAutoAnimating) {
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+      return;
+    }
+
+    let lastTime = performance.now();
+
+    const animateLoop = (time) => {
+      const delta = (time - lastTime) / 1000;
+      lastTime = time;
+
+      setOpenFactor((cur) => {
+        let next = cur + delta * 0.75 * animDirectionRef.current;
+        if (next >= 1) {
+          next = 1;
+          animDirectionRef.current = -1;
+          sound.playSnap();
+        } else if (next <= 0) {
+          next = 0;
+          animDirectionRef.current = 1;
+          sound.playSnap();
+        }
+        return next;
+      });
+
+      animFrameRef.current = requestAnimationFrame(animateLoop);
+    };
+
+    animFrameRef.current = requestAnimationFrame(animateLoop);
+
+    return () => {
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    };
+  }, [isAutoAnimating]);
+
+  const handleToggleAutoAnimate = () => {
+    sound.playPop();
+    setIsAutoAnimating((prev) => !prev);
+  };
+
+  const handleOpenFactorChange = (e) => {
+    setIsAutoAnimating(false);
+    const val = Number(e.target.value);
+    setOpenFactor(val);
+    if (val === 0 || val === 1) {
+      sound.playSnap();
+    }
+  };
 
   const handleDimensionChange = useCallback((key, value) => {
     setDimensions((prev) => ({ ...prev, [key]: value }));
@@ -37,6 +95,8 @@ export default function ShapeDetailPage({ shapeId }) {
   const handleReset = useCallback(() => {
     sound.playSnap();
     setDimensions(getDefaultDimensions(shapeId));
+    setOpenFactor(0);
+    setIsAutoAnimating(false);
   }, [shapeId]);
 
   const { prev, next } = getAdjacentShapes(shapeId);
@@ -106,8 +166,16 @@ export default function ShapeDetailPage({ shapeId }) {
           <span>{config.name}</span>
         </div>
 
-        {/* Controls: Reset, Toggle Blocks, Sound */}
+        {/* Action Controls */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <button
+            className={`btn btn-sm ${isAutoAnimating ? 'btn-accent' : ''}`}
+            onClick={handleToggleAutoAnimate}
+            style={{ fontWeight: 800 }}
+          >
+            {isAutoAnimating ? '⏸️ Pause Net' : '🎬 Open & Reassemble'}
+          </button>
+
           <button
             className={`btn btn-sm ${showBlocks ? 'btn-accent' : ''}`}
             onClick={toggleBlocks}
@@ -157,9 +225,51 @@ export default function ShapeDetailPage({ shapeId }) {
           <ShapeStage3D
             shapeId={shapeId}
             dimensions={dimensions}
+            openFactor={openFactor}
             onDimensionChange={handleDimensionChange}
           />
         </Canvas>
+
+        {/* Floating Unfold / Net Slider on Canvas */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '1rem',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            background: 'rgba(255, 255, 255, 0.94)',
+            backdropFilter: 'blur(8px)',
+            border: '2px solid #cbd5e1',
+            borderRadius: '9999px',
+            padding: '0.45rem 1.2rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.75rem',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
+            zIndex: 15,
+            width: 'min(420px, 90%)',
+          }}
+        >
+          <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#0f172a', whiteSpace: 'nowrap' }}>
+            📦 3D Solid
+          </span>
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value={openFactor}
+            onChange={handleOpenFactorChange}
+            style={{
+              flex: 1,
+              accentColor: config.accentColor,
+              cursor: 'pointer',
+            }}
+          />
+          <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#0f172a', whiteSpace: 'nowrap' }}>
+            📄 Flat Net ({Math.round(openFactor * 100)}%)
+          </span>
+        </div>
 
         {/* Previous / Next Floating Arrows */}
         {prev && (
@@ -204,7 +314,7 @@ export default function ShapeDetailPage({ shapeId }) {
         style={{
           background: '#ffffff',
           borderTop: '2px solid #e2e8f0',
-          padding: '1rem 1.5rem 1.25rem',
+          padding: '0.9rem 1.5rem 1.15rem',
           flexShrink: 0,
           boxShadow: '0 -4px 20px rgba(0,0,0,0.04)',
         }}
@@ -218,7 +328,7 @@ export default function ShapeDetailPage({ shapeId }) {
               justifyContent: 'center',
               gap: '0.5rem',
               flexWrap: 'wrap',
-              marginBottom: '0.85rem',
+              marginBottom: '0.75rem',
             }}
           >
             {config.dimensions.map((dim, idx) => (
@@ -233,46 +343,46 @@ export default function ShapeDetailPage({ shapeId }) {
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '0.4rem',
-                    padding: '0.4rem 0.85rem',
+                    padding: '0.35rem 0.8rem',
                     borderRadius: '14px',
                     background: `${dim.color}15`,
                     border: `2px solid ${dim.color}`,
                     color: dim.color,
                     fontFamily: "'Space Grotesk', sans-serif",
                     fontWeight: 900,
-                    fontSize: '1.15rem',
+                    fontSize: '1.1rem',
                   }}
                 >
-                  <span style={{ fontSize: '0.8rem', opacity: 0.85 }}>{dim.label}:</span>
+                  <span style={{ fontSize: '0.75rem', opacity: 0.85 }}>{dim.label}:</span>
                   <span>{round(dimensions[dim.key])} cm</span>
                 </div>
               </React.Fragment>
             ))}
 
             {config.id === 'cone' && (
-              <span style={{ fontSize: '0.95rem', fontWeight: 900, color: '#d97706', background: '#fef3c7', padding: '0.3rem 0.6rem', borderRadius: '10px' }}>
+              <span style={{ fontSize: '0.95rem', fontWeight: 900, color: '#d97706', background: '#fef3c7', padding: '0.25rem 0.55rem', borderRadius: '10px' }}>
                 × ⅓
               </span>
             )}
             {config.id === 'pyramid' && (
-              <span style={{ fontSize: '0.95rem', fontWeight: 900, color: '#ea580c', background: '#ffedd5', padding: '0.3rem 0.6rem', borderRadius: '10px' }}>
+              <span style={{ fontSize: '0.95rem', fontWeight: 900, color: '#ea580c', background: '#ffedd5', padding: '0.25rem 0.55rem', borderRadius: '10px' }}>
                 × ⅓
               </span>
             )}
             {config.id === 'triangle' && (
-              <span style={{ fontSize: '0.95rem', fontWeight: 900, color: '#0d9488', background: '#ccfbf1', padding: '0.3rem 0.6rem', borderRadius: '10px' }}>
+              <span style={{ fontSize: '0.95rem', fontWeight: 900, color: '#0d9488', background: '#ccfbf1', padding: '0.25rem 0.55rem', borderRadius: '10px' }}>
                 × ½
               </span>
             )}
 
             {/* Equals Result */}
-            <span style={{ fontSize: '1.5rem', fontWeight: 900, color: '#64748b' }}>=</span>
+            <span style={{ fontSize: '1.4rem', fontWeight: 900, color: '#64748b' }}>=</span>
             <div
               style={{
                 display: 'inline-flex',
                 alignItems: 'baseline',
                 gap: '0.3rem',
-                padding: '0.4rem 1rem',
+                padding: '0.35rem 0.9rem',
                 borderRadius: '14px',
                 background: 'linear-gradient(135deg, #eef2ff, #f0fdf4)',
                 border: '2px solid #818cf8',
@@ -282,7 +392,7 @@ export default function ShapeDetailPage({ shapeId }) {
                 style={{
                   fontFamily: "'Space Grotesk', sans-serif",
                   fontWeight: 900,
-                  fontSize: '1.45rem',
+                  fontSize: '1.4rem',
                   color: '#4f46e5',
                 }}
               >
@@ -299,16 +409,16 @@ export default function ShapeDetailPage({ shapeId }) {
             style={{
               display: 'grid',
               gridTemplateColumns: `repeat(${config.dimensions.length}, 1fr)`,
-              gap: '1rem',
+              gap: '0.9rem',
             }}
           >
             {config.dimensions.map((dim) => (
               <div key={dim.key} style={{ textAlign: 'center' }}>
                 <div style={{
-                  fontSize: '0.78rem',
+                  fontSize: '0.76rem',
                   fontWeight: 800,
                   color: dim.color,
-                  marginBottom: '0.2rem',
+                  marginBottom: '0.15rem',
                 }}>
                   {dim.label} ({round(dimensions[dim.key])} cm)
                 </div>

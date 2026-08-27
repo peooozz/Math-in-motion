@@ -2,8 +2,8 @@
  * ShapeStage3D.jsx
  * ═══════════════════════════════════════════════════════════════
  * Ultra-clean 3D Shape Stage.
- * Renders Three.js geometry, measurement lines, draggable handles,
- * and optional unit block grid in a bright studio environment.
+ * Renders Three.js geometry, unfolding/reassembling 3D net rigs,
+ * measurement lines, draggable handles, and optional unit block grid.
  * ═══════════════════════════════════════════════════════════════
  */
 import React, { useRef, useMemo, useState } from 'react';
@@ -11,23 +11,39 @@ import { useFrame } from '@react-three/fiber';
 import { OrbitControls, Environment, Line, Html } from '@react-three/drei';
 import * as THREE from 'three';
 import DimensionHandle from './DimensionHandle';
+import UnfoldingNet3D from './UnfoldingNet3D';
 import { shapeConfig } from '../../data/shapeConfig';
 import useAppStore from '../../store/useAppStore';
 
 const round = (v) => Math.round(v * 10) / 10;
 
 // ─── Shape Geometry Renderer ────────────────────────────────────
-function ShapeGeometry({ shapeId, dims, showBlocks }) {
+function ShapeGeometry({ shapeId, dims, showBlocks, openFactor }) {
   const config = shapeConfig[shapeId];
   const meshRef = useRef();
 
   useFrame((_, delta) => {
     if (meshRef.current) {
-      meshRef.current.rotation.y += delta * 0.08;
+      meshRef.current.rotation.y += delta * (openFactor > 0 ? 0.02 : 0.08);
     }
   });
 
   const baseColor = config.accentColor;
+
+  // If opening / unfolding net mode is active, render UnfoldingNet3D
+  if (openFactor > 0) {
+    return (
+      <group ref={meshRef}>
+        <UnfoldingNet3D
+          shapeId={shapeId}
+          dimensions={dims}
+          openFactor={openFactor}
+          color={baseColor}
+        />
+      </group>
+    );
+  }
+
   const materialProps = {
     color: baseColor,
     roughness: 0.25,
@@ -275,7 +291,7 @@ function MeasurementLines({ shapeId, dims }) {
 // ═══════════════════════════════════════════════════════════════════
 // MAIN COMPONENT
 // ═══════════════════════════════════════════════════════════════════
-export default function ShapeStage3D({ shapeId, dimensions, onDimensionChange }) {
+export default function ShapeStage3D({ shapeId, dimensions, openFactor = 0, onDimensionChange }) {
   const config = shapeConfig[shapeId];
   const controlsRef = useRef();
   const [isDraggingHandle, setIsDraggingHandle] = useState(false);
@@ -291,18 +307,21 @@ export default function ShapeStage3D({ shapeId, dimensions, onDimensionChange })
       <directionalLight position={[-3, 4, -2]} intensity={0.4} />
       <Environment preset="city" environmentIntensity={0.4} />
 
-      {/* The Shape */}
+      {/* The Shape / Animated Unfolding Net */}
       <ShapeGeometry
         shapeId={shapeId}
         dims={dimensions}
         showBlocks={showBlocks}
+        openFactor={openFactor}
       />
 
-      {/* Measurement lines */}
-      <MeasurementLines shapeId={shapeId} dims={dimensions} />
+      {/* Measurement lines (shown when mostly closed) */}
+      {openFactor < 0.3 && (
+        <MeasurementLines shapeId={shapeId} dims={dimensions} />
+      )}
 
-      {/* Dimension drag handles */}
-      {config.dimensions.map((dim) => {
+      {/* Dimension drag handles (shown when mostly closed) */}
+      {openFactor < 0.3 && config.dimensions.map((dim) => {
         const handlePos = dim.getHandlePos(dimensions);
         const label = `${dim.symbol} = ${round(dimensions[dim.key])} cm`;
 
@@ -336,7 +355,7 @@ export default function ShapeStage3D({ shapeId, dimensions, onDimensionChange })
         enableDamping
         dampingFactor={0.08}
         minDistance={2}
-        maxDistance={20}
+        maxDistance={25}
         enabled={!isDraggingHandle}
       />
     </>
