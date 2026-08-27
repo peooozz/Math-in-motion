@@ -1,9 +1,7 @@
 /**
  * ShapeCard.jsx
  * ═══════════════════════════════════════════════════════════════
- * Playful 3D Shape Toy Card for the Homepage Gallery.
- * Features: Auto-spinning 3D toy preview, friendly name, grade pill,
- * and completion progress ring.
+ * Ultra-simple, playful 3D shape card for the home gallery.
  * ═══════════════════════════════════════════════════════════════
  */
 import React, { useRef, useMemo } from 'react';
@@ -12,7 +10,6 @@ import { shapeConfig } from '../../data/shapeConfig';
 import useAppStore from '../../store/useAppStore';
 import * as THREE from 'three';
 
-// ─── Auto-spinning shape preview ──────────────────────────────
 function MiniShape({ shapeId, accentColor }) {
   const meshRef = useRef();
   const config = shapeConfig[shapeId];
@@ -32,13 +29,13 @@ function MiniShape({ shapeId, accentColor }) {
     metalness: 0.1,
   };
 
-  const s = 0.72;
+  const s = 0.75;
 
   switch (config.geometryType) {
     case 'box':
       return (
         <mesh ref={meshRef} scale={s}>
-          <boxGeometry args={config.id === 'cube' ? [2, 2, 2] : [2.5, 1.8, 1.5]} />
+          <boxGeometry args={config.id === 'cube' ? [2, 2, 2] : [2.6, 1.8, 1.5]} />
           <meshStandardMaterial {...matProps} />
         </mesh>
       );
@@ -112,59 +109,9 @@ function MiniShape({ shapeId, accentColor }) {
   }
 }
 
-// ─── Progress Ring (SVG arc) ──────────────────────────────────
-function ProgressRing({ progress = 0, color, size = 42 }) {
-  const r = (size - 4) / 2;
-  const circumference = 2 * Math.PI * r;
-  const offset = circumference - (progress / 100) * circumference;
-
-  return (
-    <svg
-      width={size}
-      height={size}
-      style={{ position: 'absolute', top: 10, right: 10, zIndex: 10 }}
-      className="progress-ring"
-    >
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={r}
-        fill="rgba(255,255,255,0.85)"
-        stroke="#e2e8f0"
-        strokeWidth={3}
-      />
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={r}
-        fill="none"
-        stroke={color}
-        strokeWidth={3.5}
-        strokeLinecap="round"
-        strokeDasharray={circumference}
-        strokeDashoffset={offset}
-        transform={`rotate(-90 ${size / 2} ${size / 2})`}
-      />
-      <text
-        x={size / 2}
-        y={size / 2 + 1}
-        textAnchor="middle"
-        dominantBaseline="middle"
-        fill="#0f172a"
-        fontSize="10"
-        fontWeight="800"
-        fontFamily="'Space Grotesk', sans-serif"
-      >
-        {Math.round(progress)}%
-      </text>
-    </svg>
-  );
-}
-
 export default function ShapeCard({ shapeId }) {
   const config = shapeConfig[shapeId];
   const setCurrentShape = useAppStore((s) => s.setCurrentShape);
-  const progress = useAppStore((s) => s.progress.shapeProgress[shapeId] || 0);
 
   if (!config) return null;
 
@@ -177,14 +124,17 @@ export default function ShapeCard({ shapeId }) {
       aria-label={`Open ${config.name}`}
       onKeyDown={(e) => e.key === 'Enter' && setCurrentShape(shapeId)}
       style={{
-        borderColor: `${config.accentColor}35`,
+        borderColor: `${config.accentColor}30`,
+        textAlign: 'center',
+        padding: '0.5rem 0.5rem 1.2rem',
       }}
     >
       {/* 3D Toy Preview Canvas */}
       <div
         className="preview-canvas"
         style={{
-          background: `radial-gradient(ellipse at center, ${config.accentColor}18 0%, #ffffff 80%)`,
+          background: `radial-gradient(circle at center, ${config.accentColor}18 0%, #ffffff 75%)`,
+          height: '160px',
         }}
       >
         <Canvas
@@ -199,50 +149,32 @@ export default function ShapeCard({ shapeId }) {
         </Canvas>
       </div>
 
-      {/* Progress ring */}
-      <ProgressRing progress={progress} color={config.accentColor} />
-
-      {/* Card Content */}
-      <div style={{ padding: '0.85rem 1rem 1rem' }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.4rem',
-          marginBottom: '0.2rem',
-        }}>
-          <span style={{ fontSize: '1.25rem' }}>{config.emoji}</span>
-          <span style={{
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontWeight: 800,
-            fontSize: '1.1rem',
-            color: '#0f172a',
-          }}>
-            {config.name}
-          </span>
-        </div>
-
-        <p style={{
-          fontSize: '0.78rem',
-          color: '#64748b',
-          lineHeight: 1.35,
-          margin: '0 0 0.6rem',
-        }}>
-          {config.teaser}
-        </p>
-
-        {/* Grade Badge */}
+      {/* Title */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '0.4rem',
+        marginTop: '0.4rem',
+      }}>
+        <span style={{ fontSize: '1.4rem' }}>{config.emoji}</span>
         <span style={{
-          display: 'inline-block',
-          fontSize: '0.7rem',
-          fontWeight: 700,
-          padding: '0.2rem 0.6rem',
-          borderRadius: '9999px',
-          background: `${config.accentColor}15`,
-          color: config.accentColor,
-          border: `1.5px solid ${config.accentColor}30`,
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontWeight: 900,
+          fontSize: '1.25rem',
+          color: '#0f172a',
         }}>
-          Grade {config.gradeRange[0]}–{config.gradeRange[1]}
+          {config.name}
         </span>
+      </div>
+
+      <div style={{
+        marginTop: '0.4rem',
+        fontSize: '0.8rem',
+        fontWeight: 800,
+        color: config.accentColor,
+      }}>
+        Touch to Play ➔
       </div>
     </div>
   );

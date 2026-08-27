@@ -1,9 +1,9 @@
 /**
  * ShapeStage3D.jsx
  * ═══════════════════════════════════════════════════════════════
- * Renders Three.js geometry for any shape in a bright studio stage,
- * dynamic toy materials/skins, dimension handles, measurement lines,
- * and orbit controls.
+ * Ultra-clean 3D Shape Stage.
+ * Renders Three.js geometry, measurement lines, draggable handles,
+ * and optional unit block grid in a bright studio environment.
  * ═══════════════════════════════════════════════════════════════
  */
 import React, { useRef, useMemo, useState } from 'react';
@@ -12,42 +12,30 @@ import { OrbitControls, Environment, Line, Html } from '@react-three/drei';
 import * as THREE from 'three';
 import DimensionHandle from './DimensionHandle';
 import { shapeConfig } from '../../data/shapeConfig';
-import { getSkinById } from '../../data/skinsConfig';
 import useAppStore from '../../store/useAppStore';
 
 const round = (v) => Math.round(v * 10) / 10;
 
 // ─── Shape Geometry Renderer ────────────────────────────────────
-function ShapeGeometry({ shapeId, dims, seeInside, activeSkinId }) {
+function ShapeGeometry({ shapeId, dims, showBlocks }) {
   const config = shapeConfig[shapeId];
   const meshRef = useRef();
-  const difficulty = useAppStore((s) => s.difficulty);
-  const skin = getSkinById(activeSkinId);
 
-  // Gentle idle rotation
   useFrame((_, delta) => {
     if (meshRef.current) {
       meshRef.current.rotation.y += delta * 0.08;
     }
   });
 
-  const opacity = seeInside ? 0.35 : skin.materialProps?.opacity ?? 0.95;
-  const transparent = seeInside || (skin.materialProps?.transparent ?? false);
-
-  const baseColor = skin.materialProps?.colorOverride || config.accentColor;
-
+  const baseColor = config.accentColor;
   const materialProps = {
     color: baseColor,
-    roughness: skin.materialProps?.roughness ?? 0.3,
-    metalness: skin.materialProps?.metalness ?? 0.05,
-    wireframe: skin.materialProps?.wireframe ?? false,
-    emissive: skin.materialProps?.emissive || (skin.materialProps?.emissiveIntensity ? baseColor : '#000000'),
-    emissiveIntensity: skin.materialProps?.emissiveIntensity ?? 0,
-    clearcoat: skin.materialProps?.clearcoat ?? 0.2,
-    transmission: skin.materialProps?.transmission ?? 0,
-    transparent,
-    opacity,
-    side: seeInside ? THREE.DoubleSide : THREE.FrontSide,
+    roughness: 0.25,
+    metalness: 0.05,
+    transparent: showBlocks,
+    opacity: showBlocks ? 0.35 : 0.95,
+    side: showBlocks ? THREE.DoubleSide : THREE.FrontSide,
+    clearcoat: 0.2,
   };
 
   switch (config.geometryType) {
@@ -56,15 +44,13 @@ function ShapeGeometry({ shapeId, dims, seeInside, activeSkinId }) {
         <mesh ref={meshRef}>
           <boxGeometry args={config.getGeometryArgs(dims)} />
           <meshPhysicalMaterial {...materialProps} />
-          {seeInside && (
+          {showBlocks && (
             <mesh>
               <boxGeometry args={config.getGeometryArgs(dims)} />
               <meshBasicMaterial color={baseColor} wireframe opacity={0.4} transparent />
             </mesh>
           )}
-          {seeInside && difficulty === 'elementary' && (
-            <UnitCubeGrid dims={dims} config={config} />
-          )}
+          {showBlocks && <UnitCubeGrid dims={dims} config={config} />}
         </mesh>
       );
 
@@ -164,7 +150,7 @@ const PrismGeometry = React.forwardRef(({ dims, materialProps }, ref) => {
   );
 });
 
-// ─── Unit Cube Grid (Explorer mode "see inside") ────────────────
+// ─── Unit Cube Grid (Block view inside) ────────────────────────
 function UnitCubeGrid({ dims, config }) {
   const cubes = useMemo(() => {
     let lx, ly, lz;
@@ -286,15 +272,14 @@ function MeasurementLines({ shapeId, dims }) {
   );
 }
 
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
 // MAIN COMPONENT
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
 export default function ShapeStage3D({ shapeId, dimensions, onDimensionChange }) {
   const config = shapeConfig[shapeId];
   const controlsRef = useRef();
   const [isDraggingHandle, setIsDraggingHandle] = useState(false);
-  const seeInside = useAppStore((s) => s.seeInside);
-  const activeSkin = useAppStore((s) => s.activeSkin);
+  const showBlocks = useAppStore((s) => s.showBlocks);
 
   if (!config) return null;
 
@@ -306,12 +291,11 @@ export default function ShapeStage3D({ shapeId, dimensions, onDimensionChange })
       <directionalLight position={[-3, 4, -2]} intensity={0.4} />
       <Environment preset="city" environmentIntensity={0.4} />
 
-      {/* The Shape with Active Skin */}
+      {/* The Shape */}
       <ShapeGeometry
         shapeId={shapeId}
         dims={dimensions}
-        seeInside={seeInside}
-        activeSkinId={activeSkin}
+        showBlocks={showBlocks}
       />
 
       {/* Measurement lines */}
