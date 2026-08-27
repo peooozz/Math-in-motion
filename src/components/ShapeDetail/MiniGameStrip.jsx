@@ -1,26 +1,42 @@
 /**
  * MiniGameStrip.jsx
- * Bottom-of-detail-page game strip. Shows the active mini-game for the current shape.
+ * ═══════════════════════════════════════════════════════════════
+ * Bottom-of-detail-page game strip.
+ * Integrates all 4 interactive educational mini-games:
+ *  1. 🎯 Match Volume (Target Rush & Streak)
+ *  2. 🤔 Guess Before Drag (Prediction Arena)
+ *  3. 🧩 Net Folding Lab (3D Folding & Spatial Quiz)
+ *  4. 🌍 Real World Sorter (Everyday Object Classification)
+ * ═══════════════════════════════════════════════════════════════
  */
 import React, { useState } from 'react';
 import MatchVolumeGame from './games/MatchVolumeGame';
+import GuessBeforeDragGame from './games/GuessBeforeDragGame';
+import NetMatchingGame from './games/NetMatchingGame';
+import RealWorldMatchGame from './games/RealWorldMatchGame';
 import { shapeConfig } from '../../data/shapeConfig';
+import sound from '../../utils/soundEffects';
 
 const GAME_TABS = [
-  { key: 'matchVolume', label: '🎯 Match Volume', available: true },
-  { key: 'guessBeforeDrag', label: '🤔 Guess First', available: false },
-  { key: 'netMatching', label: '🧩 Net Match', available: false },
-  { key: 'realWorldMatch', label: '🌍 Real World', available: false },
+  { key: 'matchVolume', label: '🎯 Match Target', icon: '🎯' },
+  { key: 'guessBeforeDrag', label: '🤔 Prediction', icon: '🤔' },
+  { key: 'netMatching', label: '🧩 Net Lab', icon: '🧩' },
+  { key: 'realWorldMatch', label: '🌍 Real World', icon: '🌍' },
 ];
 
 export default function MiniGameStrip({ shapeId, dimensions }) {
   const [activeGame, setActiveGame] = useState('matchVolume');
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(true);
   const config = shapeConfig[shapeId];
 
-  // Determine the primary formula key (volume for 3D, area for 2D)
   const primaryKey = config?.is2D ? 'area' : 'volume';
   const formula = config?.formulas?.[primaryKey];
+
+  const handleTabClick = (key) => {
+    sound.playPop();
+    setActiveGame(key);
+    setExpanded(true);
+  };
 
   return (
     <div className="game-strip">
@@ -30,18 +46,16 @@ export default function MiniGameStrip({ shapeId, dimensions }) {
         alignItems: 'center',
         justifyContent: 'space-between',
         marginBottom: expanded ? '0.6rem' : 0,
+        gap: '0.4rem',
+        flexWrap: 'wrap',
       }}>
         <div style={{ display: 'flex', gap: '0.3rem', flexWrap: 'wrap' }}>
           {GAME_TABS.map((tab) => (
             <button
               key={tab.key}
-              className={`btn btn-sm ${activeGame === tab.key ? 'btn-accent' : ''}`}
-              onClick={() => {
-                setActiveGame(tab.key);
-                setExpanded(true);
-              }}
-              disabled={!tab.available}
-              style={!tab.available ? { opacity: 0.4, cursor: 'not-allowed' } : {}}
+              className={`btn btn-sm ${activeGame === tab.key && expanded ? 'btn-accent' : ''}`}
+              onClick={() => handleTabClick(tab.key)}
+              style={{ fontSize: '0.74rem', padding: '0.3rem 0.6rem' }}
             >
               {tab.label}
             </button>
@@ -49,14 +63,17 @@ export default function MiniGameStrip({ shapeId, dimensions }) {
         </div>
         <button
           className="btn btn-sm"
-          onClick={() => setExpanded(!expanded)}
-          style={{ fontSize: '0.7rem' }}
+          onClick={() => {
+            sound.playPop();
+            setExpanded(!expanded);
+          }}
+          style={{ fontSize: '0.7rem', padding: '0.25rem 0.55rem' }}
         >
-          {expanded ? '▼ Hide' : '▲ Play'}
+          {expanded ? '▼ Minimize' : '▲ Play Arcade'}
         </button>
       </div>
 
-      {/* Active game */}
+      {/* Active game view */}
       {expanded && (
         <div style={{ marginTop: '0.4rem' }}>
           {activeGame === 'matchVolume' && formula && (
@@ -67,19 +84,13 @@ export default function MiniGameStrip({ shapeId, dimensions }) {
             />
           )}
           {activeGame === 'guessBeforeDrag' && (
-            <div style={{ padding: '1rem', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.82rem' }}>
-              🤔 Guess Before You Drag — Coming Soon!
-            </div>
+            <GuessBeforeDragGame shapeId={shapeId} dimensions={dimensions} />
           )}
           {activeGame === 'netMatching' && (
-            <div style={{ padding: '1rem', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.82rem' }}>
-              🧩 Net Matching — Coming Soon!
-            </div>
+            <NetMatchingGame shapeId={shapeId} />
           )}
           {activeGame === 'realWorldMatch' && (
-            <div style={{ padding: '1rem', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.82rem' }}>
-              🌍 Real World Match — Coming Soon!
-            </div>
+            <RealWorldMatchGame shapeId={shapeId} />
           )}
         </div>
       )}

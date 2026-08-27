@@ -1,20 +1,15 @@
 /**
  * DimensionHandle.jsx
  * ═══════════════════════════════════════════════════════════════
- * Reusable 3D draggable sphere that sits on a shape's edge/face.
+ * Reusable 3D draggable handle with live pitch-shifting audio feedback.
  * Drag is constrained to a single world axis (x, y, or z).
- *
- * Uses window-level pointer events for stable dragging even when
- * the pointer leaves the sphere. Projects screen-space deltas onto
- * the world-space axis direction for correct behavior at any camera angle.
- *
- * Touch + mouse compatible. Keyboard arrow-key fallback for a11y.
  * ═══════════════════════════════════════════════════════════════
  */
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useThree } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import * as THREE from 'three';
+import sound from '../../utils/soundEffects';
 
 const AXIS_VECTORS = {
   x: new THREE.Vector3(1, 0, 0),
@@ -43,7 +38,6 @@ export default function DimensionHandle({
 
   const axisVec = useMemo(() => AXIS_VECTORS[axis], [axis]);
 
-  // ─── Compute screen-space axis direction & scale ──────────
   const computeScreenAxis = useCallback(() => {
     const p0 = new THREE.Vector3(...position);
     const p1 = p0.clone().add(axisVec);
@@ -52,38 +46,46 @@ export default function DimensionHandle({
     p1.project(camera);
 
     const s0 = new THREE.Vector2(
-      (p0.x + 1) * size.width / 2,
-      (-p0.y + 1) * size.height / 2
+      ((p0.x + 1) * size.width) / 2,
+      ((-p0.y + 1) * size.height) / 2
     );
     const s1 = new THREE.Vector2(
-      (p1.x + 1) * size.width / 2,
-      (-p1.y + 1) * size.height / 2
+      ((p1.x + 1) * size.width) / 2,
+      ((-p1.y + 1) * size.height) / 2
     );
 
     const screenDir = s1.clone().sub(s0);
     const pixelsPerUnit = screenDir.length();
-    const normalizedDir = pixelsPerUnit > 0.001
-      ? screenDir.clone().normalize()
-      : new THREE.Vector2(1, 0);
+    const normalizedDir =
+      pixelsPerUnit > 0.001
+        ? screenDir.clone().normalize()
+        : new THREE.Vector2(1, 0);
 
     return { pixelsPerUnit, normalizedDir };
   }, [position, axisVec, camera, size]);
 
-  // ─── Pointer handlers ────────────────────────────────────
-  const handlePointerDown = useCallback((e) => {
-    e.stopPropagation();
-    const { pixelsPerUnit, normalizedDir } = computeScreenAxis();
+  const handlePointerDown = useCallback(
+    (e) => {
+      e.stopPropagation();
+      const { pixelsPerUnit, normalizedDir } = computeScreenAxis();
 
-    dragRef.current = {
-      startX: e.clientX,
-      startY: e.clientY,
-      startValue: value,
-      pixelsPerUnit,
-      normalizedDir,
-    };
-    setDragging(true);
-    onDragStart?.();
-  }, [value, computeScreenAxis, onDragStart]);
+      dragRef.current = {
+        startX: e.clientX,
+        startY: e.clientY,
+        startValue: value,
+        pixelsPerUnit,
+        normalizedDir,
+      };
+      setDragging(true);
+
+      // Start drag tone (pitch mapped to initial value)
+      const initialFreq = 220 + ((value - min) / (max - min)) * 500;
+      sound.startDragTone(initialFreq);
+
+      onDragStart?.();
+    },
+    [value, computeScreenAxis, onDragStart, min, max]
+  );
 
   useEffect(() => {
     if (!dragging) return;
@@ -100,9 +102,12 @@ export default function DimensionHandle({
       const worldDelta = pixelsPerUnit > 0.001 ? projectedPixels / pixelsPerUnit : 0;
       let newValue = startValue + worldDelta;
 
-      // Snap to step
       newValue = Math.round(newValue / step) * step;
       newValue = Math.max(min, Math.min(max, newValue));
+
+      // Modulate frequency based on value size
+      const freq = 220 + ((newValue - min) / (max - min)) * 500;
+      sound.updateDragPitch(freq);
 
       onDrag?.(newValue);
     };
@@ -110,6 +115,8 @@ export default function DimensionHandle({
     const handleUp = () => {
       dragRef.current = null;
       setDragging(false);
+      sound.stopDragTone();
+      sound.playSnap();
       onDragEnd?.();
     };
 
@@ -121,22 +128,25 @@ export default function DimensionHandle({
     };
   }, [dragging, min, max, step, onDrag, onDragEnd]);
 
-  // ─── Keyboard a11y fallback ──────────────────────────────
-  const handleKeyDown = useCallback((e) => {
-    let delta = 0;
-    if (axis === 'x' && e.key === 'ArrowRight') delta = step;
-    if (axis === 'x' && e.key === 'ArrowLeft') delta = -step;
-    if (axis === 'y' && e.key === 'ArrowUp') delta = step;
-    if (axis === 'y' && e.key === 'ArrowDown') delta = -step;
-    if (axis === 'z' && e.key === 'ArrowRight') delta = step;
-    if (axis === 'z' && e.key === 'ArrowLeft') delta = -step;
+  const handleKeyDown = useCallback(
+    (e) => {
+      let delta = 0;
+      if (axis === 'x' && e.key === 'ArrowRight') delta = step;
+      if (axis === 'x' && e.key === 'ArrowLeft') delta = -step;
+      if (axis === 'y' && e.key === 'ArrowUp') delta = step;
+      if (axis === 'y' && e.key === 'ArrowDown') delta = -step;
+      if (axis === 'z' && e.key === 'ArrowRight') delta = step;
+      if (axis === 'z' && e.key === 'ArrowLeft') delta = -step;
 
-    if (delta !== 0) {
-      e.preventDefault();
-      const newValue = Math.max(min, Math.min(max, value + delta));
-      onDrag?.(newValue);
-    }
-  }, [axis, step, value, min, max, onDrag]);
+      if (delta !== 0) {
+        e.preventDefault();
+        const newValue = Math.max(min, Math.min(max, value + delta));
+        sound.playSnap();
+        onDrag?.(newValue);
+      }
+    },
+    [axis, step, value, min, max, onDrag]
+  );
 
   const handleColor = hovered || dragging ? '#ffffff' : color;
   const emissiveIntensity = dragging ? 0.8 : hovered ? 0.5 : 0.25;
@@ -144,7 +154,6 @@ export default function DimensionHandle({
 
   return (
     <group position={position}>
-      {/* Draggable sphere handle */}
       <mesh
         ref={meshRef}
         onPointerDown={handlePointerDown}
@@ -171,7 +180,6 @@ export default function DimensionHandle({
         />
       </mesh>
 
-      {/* Floating label */}
       {label && (
         <Html
           position={[0, 0.4, 0]}
